@@ -1,0 +1,1 @@
+echo "## === CODE HEALTH ===" >> $GITHUB_STEP_SUMMARY

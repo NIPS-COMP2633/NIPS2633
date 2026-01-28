@@ -1,0 +1,27 @@
+#!/bin/sh
+# Pre-commit hook for Windows (calls PowerShell script)
+# This file needs to be executable and has no extension
+
+# Change to the repository root
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# Run the PowerShell structure update script
+if command -v powershell.exe >/dev/null 2>&1; then
+    # WSL or Git Bash on Windows with powershell.exe available
+    powershell.exe -ExecutionPolicy Bypass -File ".automations/git_hooks/powershell/structure_update.ps1"
+elif command -v pwsh >/dev/null 2>&1; then
+    # PowerShell Core
+    pwsh -ExecutionPolicy Bypass -File ".automations/git_hooks/powershell/structure_update.ps1"
+else
+    echo "Warning: PowerShell not found, skipping README structure update"
+    exit 0
+fi
+
+# Check if README.md was modified
+if git diff --name-only | grep -q "README.md"; then
+    echo "File structure in README.md has been updated automatically"
+    # Stage the updated README
+    git add README.md
+fi
+
+exit 0
