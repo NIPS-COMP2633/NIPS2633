@@ -1,1 +1,0 @@
-echo "## === CODE STYLE (LINTING) ===" >> $GITHUB_STEP_SUMMARY
