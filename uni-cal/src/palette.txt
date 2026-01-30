@@ -1,6 +1,8 @@
 
+Use this for all frontend styling. This is to standardize
+everything and keep our site looking consistent.
 
-color palette used for the fronted is:
+Color palette used for the fronted is:
     #EDEDED, #FFA41B, #FF5151, #9818D6
 
 
