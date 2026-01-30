@@ -1,44 +1,308 @@
-body {
+@import '../color_palette.css';
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-doto);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.landing-page {
+  width: 100%;
 }
 
-.App {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero Section */
+.hero-section {
+  background: var(--bg-dark);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.hero-content {
+  max-width: 900px;
+}
+
+.hero-title {
+  color: var(--text-on-dark);
+  font-size: 4.5rem;
+  margin-bottom: 24px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--color-sage);
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 40px;
+  color: var(--text-on-dark);
+  font-family: var(--font-monospace);
+  line-height: 1.8;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-cta {
+  display: inline-block;
+  padding: 18px 48px;
+  background-color: var(--color-orange);
+  color: var(--text-on-light);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: var(--font-monospace);
+  border: 2px solid var(--color-orange);
+}
+
+.hero-cta:hover {
+  background-color: var(--bg-dark);
+  color: var(--color-orange);
+}
+
+.hero-note {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: var(--text-on-dark);
+  opacity: 0.7;
+}
+
+/* Features Section */
+.features-section {
+  background-color: var(--bg-input);
+  padding: 100px 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 60px;
+}
+
+.features-section .section-title {
+  color: var(--text-on-dark);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.feature-card {
+  background: var(--bg-dark);
+  padding: 40px 30px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid var(--color-dark-brown);
+}
+
+.feature-card:hover {
+  border-color: var(--color-orange);
+}
+
+.feature-icon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-sage);
+  margin-bottom: 15px;
+}
+
+.feature-description {
+  font-size: 1rem;
+  color: var(--text-on-dark);
+  font-family: var(--font-monospace);
+  line-height: 1.6;
+}
+
+/* How It Works Section */
+.how-it-works-section {
+  background: var(--bg-dark);
+  padding: 100px 20px;
+}
+
+.how-it-works-section .section-title {
+  color: var(--text-on-dark);
+}
+
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.step {
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 12px;
+  border: 2px solid var(--color-orange);
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background: var(--color-orange);
+  color: var(--text-on-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 0 auto 20px;
+}
+
+.step-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-sage);
+  margin-bottom: 12px;
+}
+
+.step-description {
+  font-size: 1rem;
+  font-family: var(--font-monospace);
+  color: var(--text-on-dark);
+  line-height: 1.6;
+}
+
+.step-arrow {
+  font-size: 2.5rem;
+  color: var(--color-orange);
+  font-weight: bold;
+}
+
+/* Social Proof Section */
+.social-proof-section {
+  background-color: var(--bg-input);
+  padding: 80px 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 50px;
   text-align: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.stat-number {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--color-orange);
+  margin-bottom: 10px;
 }
 
-.login-link {
-  margin-top: 20px;
-  padding: 12px 24px;
-  background-color: #61dafb;
-  color: #282c34;
+.stat-label {
+  font-size: 1.1rem;
+  color: var(--text-on-dark);
+  font-weight: 600;
+}
+
+/* Final CTA Section */
+.final-cta-section {
+  background: var(--bg-dark);
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.cta-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-on-dark);
+  margin-bottom: 20px;
+}
+
+.cta-description {
+  font-size: 1.3rem;
+  color: var(--color-sage);
+  margin-bottom: 40px;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 20px 60px;
+  background-color: var(--text-placeholder);
+  color: var(--text-on-dark);
   text-decoration: none;
-  border-radius: 5px;
-  font-size: 18px;
+  border-radius: 8px;
+  font-size: 22px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  text-transform: uppercase;
+  border: 2px solid var(--color-sage);
 }
 
-.login-link:hover {
-  background-color: #4fa8c5;
+.cta-button:hover {
+  background-color: var(--bg-dark);
+  color: var(--color-sage);
 }
+
+/* Footer */
+.footer {
+  background-color: var(--bg-container);
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.footer-text {
+  color: var(--text-on-dark);
+  font-size: 0.95rem;
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.5rem; }
+  .hero-subtitle { font-size: 1.3rem; }
+  .hero-description { font-size: 1rem; }
+  .hero-cta { padding: 16px 36px; font-size: 18px; }
+  .section-title { font-size: 2rem; }
+  .features-grid { grid-template-columns: 1fr; }
+  .steps-container { flex-direction: column; }
+  .step-arrow { transform: rotate(90deg); margin: 10px 0; }
+  .cta-title { font-size: 2rem; }
+  .cta-description { font-size: 1.1rem; }
+  .cta-button { padding: 16px 40px; font-size: 18px; }
+  .stat-number { font-size: 2.5rem; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 2rem; }
+  .features-section, .how-it-works-section,
+  .social-proof-section, .final-cta-section {
+    padding: 60px 20px;
+  }
+}   

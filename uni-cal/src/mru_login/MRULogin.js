@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './mru_login.css';
+import { mru_login } from '../client-side-scripts/mock';
 
 function MRULogin() {
   const [username, setUsername] = useState('');
@@ -13,8 +14,9 @@ function MRULogin() {
     // Basic validation
     if (username && password) {
       console.log('Login attempt:', { username, password });
-      // Add your authentication logic here
-      alert('Login functionality to be implemented');
+      
+      mru_login(username, password);
+
     }
   };
 
