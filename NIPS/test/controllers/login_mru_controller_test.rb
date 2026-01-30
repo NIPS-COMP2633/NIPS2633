@@ -16,8 +16,8 @@ class LoginMruControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get create" do
-    get login_mru_create_url
-    assert_response :success
+  test "should post authenticate" do
+    post login_mru_authenticate_url, params: { username: "test", password: "test" }
+    assert_response :redirect
   end
 end

@@ -1,0 +1,173 @@
+
+/*
+* This is the style sheet for the MRU login page.
+* Notable inclusions are documented below.
+*
+* Color palette for this stylesheet:
+*   #EDEDED, #FFA41B, #FF5151, #9818D6
+*
+* Imported fonts:
+*   "Doto" is an imported google font. Import can be found in .html.erb file in the head
+*
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Doto;
+    background: #1a1825;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle retro background pattern */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(152, 24, 214, 0.04) 2px,
+            rgba(152, 24, 214, 0.04) 4px
+        );
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Ambient glow effect */
+body::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(152, 24, 214, 0.15) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* The main container that holds our login form */
+.login-container {
+    background: #252234;
+    padding: 50px 40px;
+    border: 3px solid #000000;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.login-container:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Style the heading */
+h2 {
+    text-align: center;
+    color: #EDEDED;
+    margin-bottom: 35px;
+    font-size: 42px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+
+/* Group each input field with its label */
+.form-group {
+    margin-bottom: 25px;
+}
+
+/* Style the labels above each input */
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #EDEDED;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Style all input fields */
+input[type="text"],
+input[type="username"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid rgba(152, 24, 214, 0.4);
+    background: #1a1825;
+    font-size: 16px;
+    font-family: 'Courier New', 'Courier', monospace;
+    transition: all 0.3s ease;
+    color: #d4d4d4;
+}
+
+/* Change style when user clicks/focuses on input */
+input[type="text"]:focus,
+input[type="username"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: rgba(255, 164, 27, 0.6);
+    background: #1e1c2a;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+    transform: translate(-1px, -1px);
+}
+
+input[type="text"]::placeholder,
+input[type="username"]::placeholder,
+input[type="password"]::placeholder {
+    color: #666274;
+    opacity: 1;
+}
+
+/* Style the submit button */
+.submit-btn {
+    width: 100%;
+    padding: 11px;
+    background: rgba(152, 24, 214, 0.7);
+    color: #EDEDED;
+    border: 2px solid rgba(152, 24, 214, 0.5);
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Courier New', 'Courier', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+/* Add effects when hovering over the button */
+.submit-btn:hover {
+    background: #9818D6;
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.6);
+}
+
+.submit-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+}

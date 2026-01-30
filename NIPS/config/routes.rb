@@ -1,8 +1,18 @@
 Rails.application.routes.draw do
+
+
+  # ========= mru login  ===================
+
+  # The actual login page
   get "login_mru/index"
-  get "login_mru/show"
-  get "login_mru/new"
-  get "login_mru/create"
+
+  # This posts the mru login credentials from login_mru/index.html/erb to services/mru_auth.rb
+  post "login_mru/authenticate" 
+
+  # ========================================
+
+
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
