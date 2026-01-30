@@ -10,8 +10,10 @@ https://guides.rubyonrails.org/install_ruby_on_rails.html#install-ruby-on-ubuntu
 https://documentation.ubuntu.com/server/how-to/web-services/install-ruby-on-rails/
 
 ### Running development server
+
 Once you have the repo cloned, `cd NIPS` to move into the Rails root directory, and run `rails s`
 to begin a development server from your local device. 
+
 --
 ## WSL reference
 
