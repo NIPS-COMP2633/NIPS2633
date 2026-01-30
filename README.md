@@ -5,7 +5,7 @@ The template repository, used to speed up the process of creating additional rep
 
 ### Install node
 
-`sudo apt install node` for WSL.
+`sudo apt install nodejs npm` for WSL.
 
 OR
 
