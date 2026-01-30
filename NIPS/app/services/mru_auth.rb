@@ -1,13 +1,12 @@
-# This script is triggered when the login form in
+# This script is triggered server-side when the login form in
 # `login_mru/index.html.erb` is submitted. 
 #
-# Both parameters come directly from this form.
-#
-# Below is currently a placeholder function for the
-# MRU calnder data detching functionality we will be implementing later.
+# Both parameters come directly from this request.
 #
 # At the moment, it prints the username and password it recieved into logs, 
 # and returns `true` upon successful execution.
+#
+# Future features that require storage of data may be implemented here.
 
 class MruAuth
   def self.authenticate(username, password)

@@ -1,14 +1,24 @@
 <%# 
 
 This is the login page for MRU username and password.
-Upon submission, the form will send the users password and username to the script in:
-``` 
-NIPS/app/services/mru_auth.rb
-````
-( Via post "login_mru/authenticate" )
+Upon submission:
 
-"mru_auth.rb" currently prints the contents into the log space (terminal).
+(1)  The form will send the users password and username to our server-side at:
+    ``` 
+    NIPS/app/services/mru_auth.rb
+        ````
+    ( Via post "login_mru/authenticate" )
 
+    "mru_auth.rb" currently prints the contents into the server logs (terminal).
+
+    Later, this behaviour will be slightly modified to also bring the user to the next appropriate page.
+    It currently just throws the user back to index.
+
+(2) The for will trigger the javascript script at 
+    ```
+    javascript/controllers/mru_login.js
+    ```
+    This is the client-side script that will be used for MRU authentication.
  %>
  
 <!DOCTYPE html>
@@ -36,7 +46,7 @@ NIPS/app/services/mru_auth.rb
         <h2>MRU Login</h2>
         
         <!-- The actual form element -->
-        <%= form_with url: login_mru_authenticate_path, method: :post, local: true do |form| %>
+        <%= form_with url: login_mru_authenticate_path, method: :post, local: true, data: { controller: "mru_login", action: "submit->login-form#handleSubmit" } do |form| %>
 
             <!-- username input field group -->
             <div class="form-group">
