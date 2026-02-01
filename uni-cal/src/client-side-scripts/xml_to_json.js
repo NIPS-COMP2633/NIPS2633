@@ -4,6 +4,12 @@
 //
 // Updated to handle the actual MRU XML structure with timeblocks
 
+// TODO: Create timezone handling, currently hardcoded and could cause issues
+// TODO: Update to get the actual class we're concerned with, the "va" that selects the proper one is in a different
+//       area for now
+// TODO: Iterate through the XML for all of the classes, instead of just converting one of them at a time, can
+//       probably be combined with the work on handling the classes we care about above
+
 const { DOMParser } = require('xmldom');
 
 class XmlToJsonConverter {
