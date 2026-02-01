@@ -415,7 +415,7 @@ function BookmarkletPage() {
           Install in 30 seconds! Just drag a button to your bookmarks bar.
         </p>
 
-        {/* Import Preview Section */}}
+        {/* Import Preview Section */}
         {importedData && processedEvents.length > 0 && (
           <div className="import-preview">
             <h2>Course Preview ({processedEvents.length} Course{processedEvents.length !== 1 ? 's' : ''})</h2>
