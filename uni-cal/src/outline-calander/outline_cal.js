@@ -16,7 +16,7 @@ function BookmarkletPage() {
   const bookmarkletLinkRef = useRef(null);
 
   // Bookmarklet code - copies course data to clipboard
-  const bookmarkletCode = `javascript:(function(){try{const htmlData={timestamp:Date.now(),url:window.location.href,html:document.body.innerHTML};navigator.clipboard.writeText(JSON.stringify(htmlData)).then(()=>{alert('Course data copied to clipboard!\\n\\n1. Switch to the Uni-Cal tab\\n2. Click "Import from Clipboard"');}).catch(()=>{const textarea=document.createElement('textarea');textarea.value=JSON.stringify(htmlData);document.body.appendChild(textarea);textarea.select();document.execCommand('copy');document.body.removeChild(textarea);alert('Course data copied to clipboard!\\n\\n1. Switch to the Uni-Cal tab\\n2. Click "Import from Clipboard"');});}catch(error){alert('Error: '+error.message);}})();`;
+  const bookmarkletCode = `javascript:(function(){try{const htmlData={timestamp:Date.now(),url:window.location.href,html:document.body.innerHTML};navigator.clipboard.writeText(JSON.stringify(htmlData)).then(()=>{alert('Course data saved\\n \\n Switch to the Uni-Cal tab');}).catch(()=>{const textarea=document.createElement('textarea');textarea.value=JSON.stringify(htmlData);document.body.appendChild(textarea);textarea.select();document.execCommand('copy');document.body.removeChild(textarea);alert('Course data copied to clipboard!\\n\\n1. Switch to the Uni-Cal tab\\n2. Click "Import from Clipboard"');});}catch(error){alert('Error: '+error.message);}})();`;
 
   /* READABLE VERSION:
   (function() {
