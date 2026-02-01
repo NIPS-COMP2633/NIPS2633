@@ -2,15 +2,12 @@
 //
 // Converts MRU Schedule Builder XML into Google Calendar API JSON format
 //
-// This file has been tested with the TEST at the bottom of this file.
-// It has provided a correct JSON interpretation of the XML data
-// The output amongst this TEST, and other test cases have passed as well!!!
+// Updated to handle the actual MRU XML structure with timeblocks
 
-// For Node.js environment
 const { DOMParser } = require('xmldom');
 
 class XmlToJsonConverter {
-  // XML dates transfers to google dates in their respected formats
+  // XML day numbers to Google Calendar day codes
   static DAY_MAP = {
     "1": "SU",
     "2": "MO",
@@ -21,85 +18,153 @@ class XmlToJsonConverter {
     "7": "SA"
   };
 
+  // Convert minutes from midnight to HH:MM format
+  static minutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+  }
+
+  // Create ISO datetime string for a specific day and time
+  static createDateTime(dayOfWeek, timeMinutes, semesterStartDate) {
+    // dayOfWeek: 1=Sunday, 2=Monday, etc.
+    // semesterStartDate: Date object for the first day of the semester
+    
+    const date = new Date(semesterStartDate);
+    
+    // Find the first occurrence of this day of week on or after start date
+    const startDayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, etc.
+    const targetDayOfWeek = dayOfWeek - 1; // Convert from 1-based to 0-based
+    
+    let daysToAdd = targetDayOfWeek - startDayOfWeek;
+    if (daysToAdd < 0) daysToAdd += 7;
+    
+    date.setDate(date.getDate() + daysToAdd);
+    
+    // Set the time
+    const hours = Math.floor(timeMinutes / 60);
+    const minutes = timeMinutes % 60;
+    date.setHours(hours, minutes, 0, 0);
+    
+    return date.toISOString();
+  }
+
   // Converts XML string to array of Google Calendar event JSONs
-  static convert(xmlString, timezone = "America/Edmonton") {
+  static convert(xmlString, semesterStartDate = "2026-01-06", semesterEndDate = "2026-04-30", timezone = "America/Edmonton") {
+    const startDate = new Date(semesterStartDate);
+    const endDate = new Date(semesterEndDate);
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlString, "text/xml");
 
-    const courses = doc.getElementsByTagName("Course");
-    const events = Array.from(courses).map(course => {
-      const getElementText = (tagName) => {
-        const element = course.getElementsByTagName(tagName)[0];
-        return element ? element.textContent : "";
-      };
+    const courses = doc.getElementsByTagName("course");
+    const events = [];
 
-      const code = getElementText("Code");
-      const title = getElementText("Title");
-      const days = getElementText("Days");
-      const startTime = getElementText("StartTime");
-      const endTime = getElementText("EndTime");
-      const location = getElementText("Location");
+    Array.from(courses).forEach(course => {
+      const code = course.getAttribute("code");
+      const number = course.getAttribute("number");
+      const courseCode = `${code}-${number}`;
+      
+      // Get course title from offering
+      const offering = course.getElementsByTagName("offering")[0];
+      const title = offering ? offering.getAttribute("title") : "";
 
-      // Days like "2 4 6" → MO,WE,FR
-      const rruleDays = days
-        .split(/\s+/)
-        .map(d => this.DAY_MAP[d])
-        .filter(Boolean)
-        .join(",");
+      // Get all uselections (different sections)
+      const uselections = course.getElementsByTagName("uselection");
+      
+      Array.from(uselections).forEach(uselection => {
+        // Get all blocks (Lec, Tut, Lab)
+        const selection = uselection.getElementsByTagName("selection")[0];
+        const blocks = selection ? selection.getElementsByTagName("block") : [];
+        
+        // Get all timeblocks for this selection
+        const timeblocks = uselection.getElementsByTagName("timeblock");
+        
+        // Group timeblocks by their id (referenced in blocks)
+        const timeblockMap = {};
+        Array.from(timeblocks).forEach(tb => {
+          const id = tb.getAttribute("id");
+          timeblockMap[id] = {
+            day: parseInt(tb.getAttribute("day")),
+            t1: parseInt(tb.getAttribute("t1")),
+            t2: parseInt(tb.getAttribute("t2")),
+            d1: parseInt(tb.getAttribute("d1")),
+            d2: parseInt(tb.getAttribute("d2"))
+          };
+        });
 
-      const recurrence = rruleDays ? [`RRULE:FREQ=WEEKLY;BYDAY=${rruleDays}`] : null;
+        // Create an event for each block type
+        Array.from(blocks).forEach(block => {
+          const blockType = block.getAttribute("type");
+          const secNo = block.getAttribute("secNo");
+          const teacher = block.getAttribute("teacher") || "";
+          const location = block.getAttribute("location") || "";
+          const timeblockids = block.getAttribute("timeblockids");
+          
+          if (!timeblockids) return;
 
-      const event = {
-        summary: title || code,
-        description: `Course code: ${code}`,
-        location: location,
-        start: {
-          dateTime: this.formatDatetime(startTime),
-          timeZone: timezone
-        },
-        end: {
-          dateTime: this.formatDatetime(endTime),
-          timeZone: timezone
-        }
-      };
+          // Get the timeblocks for this block
+          const ids = timeblockids.split(",");
+          const blockTimeblocks = ids.map(id => timeblockMap[id]).filter(Boolean);
+          
+          if (blockTimeblocks.length === 0) return;
 
-      if (recurrence) {
-        event.recurrence = recurrence;
-      }
+          // Use the first timeblock to get date range
+          const firstTb = blockTimeblocks[0];
 
-      return event;
+          // Collect all days this event occurs on
+          const daysOfWeek = blockTimeblocks.map(tb => this.DAY_MAP[tb.day]).filter(Boolean);
+          
+          // Use the first timeblock's time for the event
+          const startTime = firstTb.t1;
+          const endTime = firstTb.t2;
+
+          const event = {
+            summary: `${courseCode}, ${blockType}${secNo}, ${location}`,
+            description: `Course: ${title}\nInstructor: ${teacher}\nType: ${blockType}\nSection: ${secNo}`,
+            location: location,
+            start: {
+              dateTime: this.createDateTime(firstTb.day, startTime, startDate),
+              timeZone: timezone
+            },
+            end: {
+              dateTime: this.createDateTime(firstTb.day, endTime, startDate),
+              timeZone: timezone
+            }
+          };
+
+          // Add recurrence rule if there are recurring days
+          if (daysOfWeek.length > 0) {
+            const untilDate = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            event.recurrence = [
+              `RRULE:FREQ=WEEKLY;BYDAY=${daysOfWeek.join(',')};UNTIL=${untilDate}`
+            ];
+          }
+
+          events.push(event);
+        });
+      });
     });
 
     return JSON.stringify(events, null, 2);
   }
-
-  // Helper to turn e.g. "1:00" into ISO8601 string
-  static formatDatetime(timeStr) {
-    const today = new Date();
-    const [hours, minutes] = timeStr.split(":");
-
-    // Create date with current date and specified time
-    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate(),
-                         parseInt(hours), parseInt(minutes), 0);
-
-    // Format as ISO8601
-    return date.toISOString();
-  }
 }
 
-// TEST: sample XML for Software Engineering class
+// TEST with real XML snippet
 const sampleXml = `
-<Course>
-  <Code>COMP2633</Code>
-  <Title>Software Engineering</Title>
-  <Days>2 4 6</Days>
-  <StartTime>1:00</StartTime>
-  <EndTime>2:20</EndTime>
-  <Location>MC 123</Location>
-</Course>
+<course key="COMP-2633" code="COMP" number="2633">
+  <uselection key="--202601_13302-13304-">
+    <selection key="--202601_13302-13304-">
+      <block type="Lec" key="13302" secNo="001" teacher="Kidney, Jordan" location="E206" timeblockids="7,8"/>
+      <block type="Tut" key="13304" secNo="401" teacher="Kidney, Jordan" location="E147" timeblockids="9"/>
+    </selection>
+    <timeblock id="7" day="2" t1="690" t2="770" d1="6581" d2="6690"/>
+    <timeblock id="8" day="4" t1="690" t2="770" d1="6581" d2="6690"/>
+    <timeblock id="9" day="3" t1="870" t2="980" d1="6581" d2="6690"/>
+  </uselection>
+  <offering key="COMP-2633" title="Foundations of Software Engineering"/>
+</course>
 `;
 
 console.log(XmlToJsonConverter.convert(sampleXml));
 
-// Export for use in Node.js or modules
 module.exports = XmlToJsonConverter;
