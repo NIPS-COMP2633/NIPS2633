@@ -16,7 +16,9 @@ function MRULogin() {
       console.log('Login attempt:', { username, password });
       
       mru_login(username, password);
-
+      
+      // Navigate to bookmarklet page after login
+      navigate('/bookmarklet');
     }
   };
 
@@ -52,6 +54,9 @@ function MRULogin() {
           <div className="button-group">
             <button type="button" className="back-btn" onClick={() => navigate('/')}>Go Back</button>
             <button type="submit" className="submit-btn">Login</button>
+          </div>
+          <div className="button-group">
+            <button type="button" className="skip-btn" onClick={() => navigate('/bookmarklet')}>Skip to Outline Import</button>
           </div>
         </form>
       </div>

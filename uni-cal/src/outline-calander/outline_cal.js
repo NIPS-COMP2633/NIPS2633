@@ -134,10 +134,10 @@ function BookmarkletPage() {
         <div className="how-to-use">
           <h2>How to Use</h2>
           <ol>
-            <li><strong>Navigate</strong> to your university's calendar page (e.g., MyMRU.ca)</li>
-            <li><strong>Click</strong> the "Uni-Cal Importer" bookmark in your bookmarks bar</li>
-            <li><strong>Wait</strong> for the bookmarklet to extract your calendar events</li>
-            <li><strong>Import</strong> the events to your Google Calendar automatically</li>
+            <li><strong>Open</strong> your university's D2L page (<a href="https://learn.mru.ca/d2l/home">learn.mru.ca</a>)</li>
+            <li><strong>Navigate</strong> to each course outline you wish to import</li>
+            <li><strong>click</strong> the "Uni-Cal Importer" button in your bookmarks bar to add</li>
+            <li><strong>Done.</strong> the events will be added to your Google Calendar automatically</li>
           </ol>
         </div>
 

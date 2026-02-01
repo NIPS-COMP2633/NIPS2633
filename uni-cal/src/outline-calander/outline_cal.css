@@ -235,6 +235,11 @@
   opacity: 0.9;
 }
 
+a{
+  color: var(--border-secondary);
+  font-weight: 900;
+}
+
 .bookmarklet-link {
   display: inline-flex;
   align-items: center;

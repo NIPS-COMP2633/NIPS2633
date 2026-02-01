@@ -219,3 +219,34 @@
     transform: translateY(0);
     box-shadow: var(--shadow-button);
 }
+
+/* Skip button - subtle cream variant */
+.skip-btn {
+    width: 100%;
+    border-radius: 7px;
+    padding: 14px;
+    background: transparent;
+    color: var(--text-on-dark);
+    border: 2px solid var(--border-subtle);
+    font-size: 16px;
+    font-weight: bold;
+    font-family: var(--font-monospace);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-button);
+    position: relative;
+}
+
+.skip-btn:hover {
+    background: rgba(240, 242, 189, 0.1);
+    border-color: var(--text-on-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button-hover);
+}
+
+.skip-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-button);
+}
