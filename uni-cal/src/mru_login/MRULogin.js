@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './mru_login.css';
+import { mru_login } from '../client-side-scripts/mock';
 
 function MRULogin() {
   const [username, setUsername] = useState('');
@@ -13,13 +14,17 @@ function MRULogin() {
     // Basic validation
     if (username && password) {
       console.log('Login attempt:', { username, password });
-      // Add your authentication logic here
-      alert('Login functionality to be implemented');
+      
+      mru_login(username, password);
+      
+      // Navigate to bookmarklet page after login
+      navigate('/bookmarklet');
     }
   };
 
   return (
     <div className="mru-login-page">
+
       <div className="login-container">
         <h2>MRU Login</h2>
         <form id="loginForm" onSubmit={handleSubmit}>
@@ -48,10 +53,14 @@ function MRULogin() {
             />
           </div>
           <div className="button-group">
-            <button type="button" className="back-btn" onClick={() => navigate('/')}>Go Back</button>
             <button type="submit" className="submit-btn">Login</button>
+            <button type="button" className="back-btn" onClick={() => navigate('/')}>Go Back</button>
+
           </div>
         </form>
+      </div>
+            <div className="button-group">
+        <button type="button" className="skip-btn" onClick={() => navigate('/bookmarklet')}>Skip This Step</button>
       </div>
     </div>
   );

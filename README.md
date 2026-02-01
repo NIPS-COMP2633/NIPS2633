@@ -1,6 +1,14 @@
 # Template
 The template repository, used to speed up the process of creating additional repositories.
 
+### Scripts
+
+Scripts that execute client side should go into:
+`src/client-side-scripts/`.
+
+This will be pretty much all scripts for the time being.
+
+
 ## React installation
 
 ### Install node

@@ -4,27 +4,28 @@
 * Notable inclusions are documented below.
 *
 * Color palette for this stylesheet:
-*   #EDEDED, #FFA41B, #FF5151, #9818D6
+*   Inherited from color_palette.css (#4B352A, #CA7842, #B2CD9C, #F0F2BD)
 *
 * Imported fonts:
-*   "Doto" is an imported google font.
+*   Fonts are imported via color_palette.css (Doto, Special Elite, Nabla)
 *
 * Usage in React component:
 *   import './mru_login.css';
 *   <div className="mru-login-page">...</div>
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap');
+@import '../color_palette.css';
 
 /* Component wrapper - replaces body styling for React */
 .mru-login-page {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Doto", -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #1a1825;
+    font-family: var(--font-doto);
+    background: var(--bg-dark);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -36,7 +37,7 @@
     box-sizing: border-box;
 }
 
-/* Subtle retro background pattern */
+/* Subtle background texture with sage green */
 .mru-login-page::before {
     content: '';
     position: absolute;
@@ -46,36 +47,37 @@
     bottom: 0;
     background-image: 
         repeating-linear-gradient(
-            0deg,
+            45deg,
             transparent,
-            transparent 2px,
-            rgba(152, 24, 214, 0.04) 2px,
-            rgba(152, 24, 214, 0.04) 4px
+            transparent 10px,
+            rgba(178, 205, 156, 0.03) 10px,
+            rgba(178, 205, 156, 0.03) 20px
         );
     pointer-events: none;
     z-index: 1;
 }
 
-/* Ambient glow effect */
+/* Warm ambient glow effect with orange */
 .mru-login-page::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(152, 24, 214, 0.15) 0%, transparent 65%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(202, 120, 66, 0.08) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
 }
 
-/* The main container that holds our login form */
+/* The main container - 60% of visual weight */
 .login-container {
-    background: #252234;
+    border-radius: 15px;
+    background: var(--bg-container);
     padding: 50px 80px;
-    border: 3px solid #000000;
-    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--border-primary);
+    box-shadow: var(--shadow-container);
     width: 100%;
     max-width: 620px;
     position: relative;
@@ -84,14 +86,14 @@
 }
 
 .login-container:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.6);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-container-hover);
 }
 
-/* Style the heading */
+/* Style the heading - high contrast cream on dark */
 .mru-login-page h2 {
     text-align: start;
-    color: #EDEDED;
+    color: var(--text-on-dark);
     margin-bottom: 35px;
     font-size: 42px;
     font-weight: bold;
@@ -99,6 +101,7 @@
     letter-spacing: 3px;
     position: relative;
     padding-bottom: 15px;
+    text-shadow: var(--shadow-text);
 }
 
 
@@ -107,111 +110,155 @@
     margin-bottom: 25px;
 }
 
-/* Style the labels above each input */
+/* Style the labels - cream text for high contrast */
 .mru-login-page label {
     display: block;
-    margin-bottom: 8px;
-    color: #EDEDED;
+    margin-bottom: 10px;
+    color: var(--text-on-dark);
     font-weight: bold;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* Style all input fields */
+/* Style all input fields - dark with subtle borders */
 .mru-login-page input[type="text"],
 .mru-login-page input[type="username"],
 .mru-login-page input[type="password"] {
-    width: 18vw;
+    width: 90%;
     padding: 14px;
-    border: 2px solid rgba(152, 24, 214, 0.4);
-    background: #1a1825;
+    border-radius: 4px;
+
+    border: 2px solid var(--border-dark);
+    background: var(--bg-input);
     font-size: 16px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-monospace);
     transition: all 0.3s ease;
-    color: #d4d4d4;
+    color: var(--text-on-dark);
 }
 
-/* Change style when user clicks/focuses on input */
+/* Change style when user clicks/focuses - orange accent */
 .mru-login-page input[type="text"]:focus,
 .mru-login-page input[type="username"]:focus,
 .mru-login-page input[type="password"]:focus {
     outline: none;
-    border-color: rgba(255, 164, 27, 0.6);
-    background: #1e1c2a;
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
-    transform: translate(-1px, -1px);
+    background: var(--bg-input-focus);
 }
 
 .mru-login-page input[type="text"]::placeholder,
 .mru-login-page input[type="username"]::placeholder,
 .mru-login-page input[type="password"]::placeholder {
-    color: #666274;
+    color: var(--text-placeholder);
     opacity: 1;
 }
 
 /* Button group container */
 .button-group {
     display: flex;
+    flex-direction: row;
     gap: 15px;
-    margin-top: 10px;
+    margin-top: 50px;
+    width: 100%;
+    max-width: 620px;
 }
 
-/* Style the submit button */
+.mru-login-page > .button-group {
+    margin: 20px 0;
+    padding: 0 20px;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* Submit button - 10% accent (warm orange) */
 .submit-btn {
-    width: 40%;
-    padding: 11px;
-    background: rgba(152, 24, 214, 0.7);
-    color: #EDEDED;
-    border: 2px solid rgba(152, 24, 214, 0.5);
-    font-size: 20px;
+    flex: 1;
+    padding: 14px;
+    background: var(--color-orange);
+    color: var(--text-on-light);
+    border: 2px solid var(--border-primary);
+    font-size: 18px;
     font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-monospace);
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-button);
     position: relative;
+    border-radius: 7px;
+
 }
 
-/* Add effects when hovering over the button */
+/* Add effects when hovering - lighten and lift */
 .submit-btn:hover {
-    background: #9818D6;
-    transform: translate(-1px, -1px);
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.6);
+    background: #d88c58;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button-hover);
 }
 
 .submit-btn:active {
-    transform: translate(1px, 1px);
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    transform: translateY(0);
+    box-shadow: var(--shadow-button);
 }
 
-/* Style the back button */
+/* Back button - secondary sage green */
 .back-btn {
-    width: 40%;
-    padding: 11px;
-    background: #FF5151;
-    color: #EDEDED;
-    border: 2px solid #fb5959;
-    font-size: 20px;
+    flex: 1;
+    border-radius: 7px;
+    padding: 14px;
+    background: var(--color-sage);
+    color: var(--text-on-light);
+    border: 2px solid var(--border-secondary);
+    font-size: 18px;
     font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-monospace);
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-button);
     position: relative;
 }
 
 .back-btn:hover {
-    background: #ff5d5d;
-    transform: translate(-1px, -1px);
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.6);
+    background: #c4dab0;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button-hover);
 }
 
 .back-btn:active {
-    transform: translate(1px, 1px);
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    transform: translateY(0);
+    box-shadow: var(--shadow-button);
+}
+
+/* Skip button - subtle cream variant */
+.mru-login-page .skip-btn {
+    align-self: center;
+    width: 72%;
+    border-radius: 7px;
+    padding: 14px;
+    background: transparent;
+    color: var(--text-on-dark);
+    border: 2px solid var(--border-subtle);
+    font-size: 16px;
+    font-weight: bold;
+    font-family: var(--font-monospace);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-button);
+    position: relative;
+}
+
+.mru-login-page .skip-btn:hover {
+    background: rgba(240, 242, 189, 0.1);
+    border-color: var(--text-on-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button-hover);
+}
+
+.mru-login-page .skip-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-button);
 }
