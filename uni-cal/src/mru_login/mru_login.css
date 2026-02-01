@@ -25,6 +25,7 @@
     background: var(--bg-dark);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -154,8 +155,18 @@
 /* Button group container */
 .button-group {
     display: flex;
+    flex-direction: row;
     gap: 15px;
     margin-top: 50px;
+    width: 100%;
+    max-width: 620px;
+}
+
+.mru-login-page > .button-group {
+    margin: 20px 0;
+    padding: 0 20px;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 /* Submit button - 10% accent (warm orange) */
@@ -221,8 +232,9 @@
 }
 
 /* Skip button - subtle cream variant */
-.skip-btn {
-    width: 100%;
+.mru-login-page .skip-btn {
+    align-self: center;
+    width: 72%;
     border-radius: 7px;
     padding: 14px;
     background: transparent;
@@ -239,14 +251,14 @@
     position: relative;
 }
 
-.skip-btn:hover {
+.mru-login-page .skip-btn:hover {
     background: rgba(240, 242, 189, 0.1);
     border-color: var(--text-on-dark);
     transform: translateY(-2px);
     box-shadow: var(--shadow-button-hover);
 }
 
-.skip-btn:active {
+.mru-login-page .skip-btn:active {
     transform: translateY(0);
     box-shadow: var(--shadow-button);
 }
