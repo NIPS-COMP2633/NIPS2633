@@ -1,11 +1,12 @@
 // Data processing utilities for converting D2L course data to Google Calendar format
+// Currently only the title is acquired successfully
 
 /**
  * Constants for data transfer
  */
 export const STORAGE_KEY = 'uni-cal-import-data';
 export const STORAGE_STATUS_KEY = 'uni-cal-import-status';
-
+  
 /**
  * Day mapping from D2L numeric format to Google Calendar RRULE format
  */

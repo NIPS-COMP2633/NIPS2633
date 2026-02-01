@@ -15,36 +15,8 @@ function BookmarkletPage() {
   const [error, setError] = useState(null);
   const bookmarkletLinkRef = useRef(null);
 
-  // Bookmarklet code - copies course data to clipboard
+  // Bookmarklet code - copies course data to clipboard, which is automatically pulled when our page is focussed
   const bookmarkletCode = `javascript:(function(){try{const htmlData={timestamp:Date.now(),url:window.location.href,html:document.body.innerHTML};navigator.clipboard.writeText(JSON.stringify(htmlData)).then(()=>{alert('Course data saved\\n \\n Switch to the Uni-Cal tab');}).catch(()=>{const textarea=document.createElement('textarea');textarea.value=JSON.stringify(htmlData);document.body.appendChild(textarea);textarea.select();document.execCommand('copy');document.body.removeChild(textarea);alert('Course data copied to clipboard!\\n\\n1. Switch to the Uni-Cal tab\\n2. Click "Import from Clipboard"');});}catch(error){alert('Error: '+error.message);}})();`;
-
-  /* READABLE VERSION:
-  (function() {
-    try {
-      const htmlData = {
-        timestamp: Date.now(),
-        url: window.location.href,
-        html: document.body.innerHTML
-      };
-      navigator.clipboard.writeText(JSON.stringify(htmlData))
-        .then(() => {
-          alert('Course data copied to clipboard!\n\n1. Switch to the Uni-Cal tab\n2. Click "Import from Clipboard"');
-        })
-        .catch(() => {
-          // Fallback for older browsers
-          const textarea = document.createElement('textarea');
-          textarea.value = JSON.stringify(htmlData);
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-          alert('Course data copied to clipboard!\n\n1. Switch to the Uni-Cal tab\n2. Click "Import from Clipboard"');
-        });
-    } catch (error) {
-      alert('Error: ' + error.message);
-    }
-  })();
-  */
 
 
   // Set href using ref to avoid React warning about javascript: URLs
@@ -53,13 +25,6 @@ function BookmarkletPage() {
       bookmarkletLinkRef.current.href = bookmarkletCode;
     }
   }, [bookmarkletCode]);
-
-  // Request notification permission on mount
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
-  }, []);
 
   // Check if a course is a duplicate
   const isDuplicateCourse = (newCourse) => {
@@ -385,14 +350,6 @@ function BookmarkletPage() {
             setImportStatus('listening');
           }
         }, 2000);
-        
-        // Optional: Show browser notification if tab is not focused
-        if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
-          new Notification('Uni-Cal: Course Data Received', {
-            body: `Successfully imported ${result.courseCount} course(s)`,
-            icon: '/favicon.ico'
-          });
-        }
       } else {
         setError(result.error || 'Failed to process course data');
         setImportStatus('error');
