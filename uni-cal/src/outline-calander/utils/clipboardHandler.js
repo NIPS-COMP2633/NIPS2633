@@ -1,12 +1,12 @@
 // Clipboard handling utilities for importing course data
 
 /**
- * Read and parse JSON data from clipboard
- * @returns {Promise<Object>} - Parsed clipboard data
- * @throws {Error} - If clipboard is empty or data is invalid
+ * Parse and validate clipboard text as course data
+ * @param {string} clipboardText - Raw clipboard text
+ * @returns {Object} - Parsed clipboard data
+ * @throws {Error} - If data is empty or invalid
  */
-export async function readClipboardData() {
-  const clipboardText = await navigator.clipboard.readText();
+function parseAndValidateClipboardText(clipboardText) {
   
   if (!clipboardText) {
     throw new Error('Clipboard is empty. Make sure you clicked the bookmarklet first.');
@@ -21,6 +21,16 @@ export async function readClipboardData() {
   }
   
   return data;
+}
+
+/**
+ * Read and parse JSON data from clipboard
+ * @returns {Promise<Object>} - Parsed clipboard data
+ * @throws {Error} - If clipboard is empty or data is invalid
+ */
+export async function readClipboardData() {
+  const clipboardText = await navigator.clipboard.readText();
+  return parseAndValidateClipboardText(clipboardText);
 }
 
 /**
@@ -53,16 +63,10 @@ export async function autoCheckClipboard(lastCheck = null) {
       return { data: null, clipboardText };
     }
 
-    // Try to parse as JSON
-    const data = JSON.parse(clipboardText);
-    
-    // Check if it looks like our bookmarklet data
-    if (data.html && data.url && data.timestamp) {
-      console.log('Auto-detected course data in clipboard!');
-      return { data, clipboardText };
-    }
-    
-    return { data: null, clipboardText };
+    // Parse and validate using shared logic
+    const data = parseAndValidateClipboardText(clipboardText);
+    console.log('Auto-detected course data in clipboard!');
+    return { data, clipboardText };
   } catch (error) {
     // Silently fail - clipboard might not have valid data or permission denied
     console.log('Auto-clipboard check skipped:', error.message);

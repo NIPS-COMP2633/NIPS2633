@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './outline_cal.css';
-import { processImportData, STORAGE_KEY } from './utils/dataProcessor';
+import { processImportData, parseHTMLForCourseData, STORAGE_KEY } from './utils/dataProcessor';
 import { generateBookmarkletCode, copyToClipboard as copyText } from './utils/bookmarkletGenerator';
-import { readClipboardData, autoCheckClipboard } from './utils/clipboardHandler';
-import { parseHTMLForCourseData } from './utils/htmlParser';
+import { autoCheckClipboard } from './utils/clipboardHandler';
 import { filterDuplicateCourses } from './utils/courseUtils';
 import { exportToGoogleCalendar } from './utils/calendarExporter';
+
+
 
 function BookmarkletPage() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ function BookmarkletPage() {
   const bookmarkletLinkRef = useRef(null);
   const bookmarkletCode = generateBookmarkletCode();
 
+
   // Set bookmarklet href
   useEffect(() => {
     if (bookmarkletLinkRef.current) {
@@ -26,9 +28,12 @@ function BookmarkletPage() {
     }
   }, [bookmarkletCode]);
 
+
+
   // Process imported data
-  const processImportedData = useCallback((rawData) => {
+  const processImportedData = useCallback(async (rawData) => {
     try {
+      window.scrollTo(0, 0);
       setImportStatus('received');
       setImportedData(rawData);
       
@@ -45,10 +50,10 @@ function BookmarkletPage() {
       }
       
       setImportStatus('processing');
-      const result = processImportData(rawData);
+      const result = await processImportData(rawData);
       
       if (result.success) {
-        setProcessedEvents(prev => [...prev, ...result.events]);
+        setProcessedEvents(prev => [...prev, ...result.courses]);
         setImportStatus('success');
         setTimeout(() => setImportStatus('listening'), 2000);
       } else {
@@ -62,6 +67,8 @@ function BookmarkletPage() {
     }
   }, [allImportedCourses]);
 
+
+
   // Auto-check clipboard when window gains focus
   useEffect(() => {
     let lastClipboardCheck = null;
@@ -74,7 +81,7 @@ function BookmarkletPage() {
 
       if (data) {
         setImportStatus('processing');
-        const importData = parseHTMLForCourseData(data.html, data.url);
+        const importData = parseHTMLForCourseData(data.html, data.url, data.pdfData);
         processImportedData(importData);
       }
     };
@@ -83,27 +90,7 @@ function BookmarkletPage() {
     return () => window.removeEventListener('focus', handleWindowFocus);
   }, [importStatus, processImportedData]);
 
-  // Handle manual clipboard import (unused but kept for potential manual trigger)
-  // eslint-disable-next-line no-unused-vars
-  const handleImportFromClipboard = async () => {
-    try {
-      setImportStatus('processing');
-      
-      const data = await readClipboardData();
-      console.log('Received HTML from clipboard:', data.url);
-      
-      const importData = parseHTMLForCourseData(data.html, data.url);
-      processImportedData(importData);
-    } catch (error) {
-      console.error('Error importing from clipboard:', error);
-      if (error instanceof SyntaxError) {
-        alert('Invalid data in clipboard. Make sure you copied from the bookmarklet.');
-      } else {
-        alert(error.message);
-      }
-      setImportStatus('error');
-    }
-  };
+
 
   // Clear all data
   const handleClearData = () => {
@@ -112,22 +99,6 @@ function BookmarkletPage() {
     setProcessedEvents([]);
     setAllImportedCourses([]);
     localStorage.removeItem(STORAGE_KEY);
-  };
-
-  // Manual check for stored data (testing, unused but kept for debugging)
-  // eslint-disable-next-line no-unused-vars
-  const handleManualCheck = () => {
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    if (storedData) {
-      try {
-        processImportedData(JSON.parse(storedData));
-      } catch (err) {
-        alert('Failed to parse stored data: ' + err.message);
-        setImportStatus('error');
-      }
-    } else {
-      alert('No data found in localStorage. Make sure the bookmarklet has been run on a D2L page.');
-    }
   };
 
   // Export to calendar
@@ -152,6 +123,8 @@ function BookmarkletPage() {
     }
   };
 
+
+
   return (
     <div className="bookmarklet-page">
       <div className="button-group">
@@ -162,6 +135,17 @@ function BookmarkletPage() {
         <p className="instructions">
           Install in 30 seconds! Just drag a button to your bookmarks bar.
         </p>
+
+        {/* Loading Indicator */}
+        {importStatus === 'processing' && (
+          <div className="import-loading">
+            <div className="loading-spinner"></div>
+            <h2>Processing Course Data...</h2>
+            <p className="loading-info">
+              Extracting course information using AI. This may take a few seconds.
+            </p>
+          </div>
+        )}
 
         {/* Import Preview Section */}
         {importedData && processedEvents.length > 0 && (
@@ -175,22 +159,18 @@ function BookmarkletPage() {
                 <div key={idx} className="course-card">
                   <h3>{course.title}</h3>
                   <div className="course-details">
-                    <div className="detail-row">
-                      <strong>Code:</strong> <span>{course.code}</span>
-                    </div>
-                    {course.days && (
+                    {course.events && course.events.length > 0 ? (
                       <div className="detail-row">
-                        <strong>Days:</strong> <span>{course.days}</span>
+                        <strong>Events:</strong>
+                        <ul className="events-list">
+                          {course.events.map((event, eventIdx) => (
+                            <li key={eventIdx}>{event.summary}</li>
+                          ))}
+                        </ul>
                       </div>
-                    )}
-                    {course.startTime && course.endTime && (
-                      <div className="detail-row">
-                        <strong>Time:</strong> <span>{course.startTime} - {course.endTime}</span>
-                      </div>
-                    )}
-                    {(!course.startTime || !course.endTime) && (
+                    ) : (
                       <div className="detail-row warning">
-                        <strong>Time:</strong> <span>Not found - will use default (9 AM - 10 AM)</span>
+                        <strong>Events:</strong> <span>No events found</span>
                       </div>
                     )}
                     {course.location && (

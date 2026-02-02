@@ -6,14 +6,7 @@
  * @returns {Promise<void>}
  */
 export async function exportEventsAsJSON(events) {
-  const dataStr = JSON.stringify(events, null, 2);
-  const dataBlob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(dataBlob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'uni-cal-events.json';
-  link.click();
-  URL.revokeObjectURL(url);
+  // to be implemented
 }
 
 /**
