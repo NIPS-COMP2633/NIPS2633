@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './outline_cal.css';
 import { processImportData, STORAGE_KEY } from '../utils/dataProcessor';
+import {gapiLoaded, gisLoaded, initializeGapiClient, handleAuthClick} from '../client-side-scripts/calendar_auth'
 
 function BookmarkletPage() {
   const navigate = useNavigate();
@@ -25,6 +26,11 @@ function BookmarkletPage() {
       bookmarkletLinkRef.current.href = bookmarkletCode;
     }
   }, [bookmarkletCode]);
+
+  useEffect(() => {
+    gapiLoaded()
+    gisLoaded()
+  }, [])
 
   // Check if a course is a duplicate
   const isDuplicateCourse = (newCourse) => {
@@ -156,23 +162,7 @@ function BookmarkletPage() {
   // Handle export to Google Calendar (placeholder for now)
   const handleExportToCalendar = async () => {
     try {
-      setImportStatus('processing');
-      
-      // TODO: Implement Google Calendar API integration
-      // For now, just download as JSON
-      const dataStr = JSON.stringify(processedEvents, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'uni-cal-events.json';
-      link.click();
-      URL.revokeObjectURL(url);
-      
-      alert('Events exported! Google Calendar integration coming soon.\n\nFor now, events have been downloaded as JSON.');
-      
-      // Clear data after successful export
-      setTimeout(handleClearData, 1000);
+      handleAuthClick()
     } catch (error) {
       setError('Failed to export events: ' + error.message);
       setImportStatus('error');
