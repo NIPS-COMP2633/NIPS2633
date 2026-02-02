@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './outline_cal.css';
 import { processImportData, STORAGE_KEY } from '../utils/dataProcessor';
-import {gapiLoaded, gisLoaded, initializeGapiClient, handleAuthClick} from '../client-side-scripts/calendar_auth'
+import {gapiLoaded, gisLoaded, handleAuthClick} from '../client-side-scripts/calendar_auth'
+import {addNewCalendar} from '../client-side-scripts/export_events'
 
 function BookmarkletPage() {
   const navigate = useNavigate();
@@ -159,10 +160,11 @@ function BookmarkletPage() {
     }
   };
 
-  // Handle export to Google Calendar (placeholder for now)
   const handleExportToCalendar = async () => {
     try {
-      handleAuthClick()
+      handleAuthClick(() => {
+        addNewCalendar()
+      }) 
     } catch (error) {
       setError('Failed to export events: ' + error.message);
       setImportStatus('error');
