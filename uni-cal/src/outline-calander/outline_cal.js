@@ -260,7 +260,7 @@ function BookmarkletPage() {
         <div className="how-to-use">
           <h2>Step 3: Import your Courses</h2>
           <ol>
-            <li><strong>Find you ouline on D2L</strong> - Navigate to your course outline page in a new tab <a class="mru_link" href="https://learn.mru.ca/d2l/home" target="_blank" rel="noopener noreferrer">learn.mru.ca</a></li>
+            <li><strong>Find you ouline on D2L</strong> - Navigate to your course outline page in a new tab <a className="mru_link" href="https://learn.mru.ca/d2l/home" target="_blank" rel="noopener noreferrer">learn.mru.ca</a></li>
             <li><strong>Click the Bookmarklet</strong> - Once you have found the page with your outline, click the "Uni-Cal Importer" button in your bookmarks bar on the D2L page</li>
             <li><strong>Switch Back Here</strong> - Come back to this Uni-Cal tab, and tada! Your course is there!</li>
             <li><strong>Review & Repeat</strong> - Check the course details, and continue adding until you're done </li>
