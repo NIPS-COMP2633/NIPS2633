@@ -1,0 +1,130 @@
+[
+  {
+    "summary": "Morning Workout",
+    "description": "Gym session - cardio and weights",
+    "location": "Fitness Center",
+    "start": {
+      "dateTime": "2026-02-05T07:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-05T08:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Team Standup",
+    "description": "Daily sync with the development team",
+    "start": {
+      "dateTime": "2026-02-05T09:30:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-05T10:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Client Presentation",
+    "description": "Q1 progress review with stakeholders",
+    "location": "Conference Room B",
+    "start": {
+      "dateTime": "2026-02-06T14:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-06T15:30:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Lunch with Sarah",
+    "description": "Catch up at the new Italian place",
+    "location": "Giovanni's Restaurant",
+    "start": {
+      "dateTime": "2026-02-07T12:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-07T13:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Code Review Session",
+    "description": "Review pull requests for Sprint 12",
+    "start": {
+      "dateTime": "2026-02-07T15:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-07T16:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Dentist Appointment",
+    "description": "Regular checkup and cleaning",
+    "location": "Downtown Dental Clinic",
+    "start": {
+      "dateTime": "2026-02-10T10:30:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-10T11:30:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Project Planning Meeting",
+    "description": "Sprint planning for next quarter",
+    "location": "Main Office, Room 301",
+    "start": {
+      "dateTime": "2026-02-11T13:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-11T15:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Book Club Meeting",
+    "description": "Discussing 'The Midnight Library'",
+    "location": "Coffee House on 5th",
+    "start": {
+      "dateTime": "2026-02-12T18:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-12T19:30:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Weekend Hiking Trip",
+    "description": "Day hike in Banff National Park",
+    "location": "Banff, AB",
+    "start": {
+      "dateTime": "2026-02-14T08:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-14T17:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  },
+  {
+    "summary": "Birthday Party",
+    "description": "Alex's 30th birthday celebration",
+    "location": "The Lounge Downtown",
+    "start": {
+      "dateTime": "2026-02-15T19:00:00",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "2026-02-15T23:00:00",
+      "timeZone": "America/Edmonton"
+    }
+  }
+]
