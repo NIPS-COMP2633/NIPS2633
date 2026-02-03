@@ -31,7 +31,9 @@ export async function addEvents(eventsArray, calendarId = 'primary') {
           calendarId: calendarId,
           resource: event
         });
-        
+
+        // Add "response" to console log if errors occur.
+
         console.log(`Added: ${event.summary}`);
       }
       
