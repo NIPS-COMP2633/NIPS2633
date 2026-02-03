@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './outline_cal.css';
 import { processImportData, STORAGE_KEY } from '../utils/dataProcessor';
 import {gapiLoaded, gisLoaded, handleAuthClick} from '../client-side-scripts/calendar_auth'
-import {addNewCalendar} from '../client-side-scripts/export_events'
+import {addNewCalendar, addEvents} from '../client-side-scripts/export_events'
+import eventsData from '../test_file.json'
 
 function BookmarkletPage() {
   const navigate = useNavigate();
@@ -163,14 +164,13 @@ function BookmarkletPage() {
   const handleExportToCalendar = async () => {
     try {
       handleAuthClick(() => {
-        addNewCalendar()
-      }) 
+        addEvents(eventsData, 'primary');
+      });
     } catch (error) {
-      setError('Failed to export events: ' + error.message);
-      setImportStatus('error');
+      setError('Failed: ' + error.message);
     }
   };
-
+  
   const copyToClipboard = () => {
     navigator.clipboard.writeText(bookmarkletCode).then(() => {
       setCopied(true);

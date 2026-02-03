@@ -48,7 +48,6 @@ export function handleAuthClick(onAuthSuccess) {
       // Skip display of account chooser and consent dialog for an existing session.
       tokenClient.requestAccessToken({prompt: ''});
     }
-
 }
 
 export function handleSignoutClick() {
