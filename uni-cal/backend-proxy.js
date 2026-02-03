@@ -22,15 +22,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// Create axios instance with cookie support
-const jar = new CookieJar();
-const client = wrapper(axios.create({
-    jar,
-    maxRedirects: 0, // DON'T follow redirects automatically
-    validateStatus: (status) => status < 400, // Don't throw on 3xx
-    withCredentials: true
-}));
-
 /**
  * POST /api/get_calendar
  * Handles the full authentication flow and retrieves schedule data
@@ -46,6 +37,15 @@ app.post('/api/get_calendar', async (req, res) => {
     const { username, password, term } = req.body;
     
     console.log('Starting calendar workflow...');
+    
+    // Create a fresh cookie jar for this request
+    const jar = new CookieJar();
+    const client = wrapper(axios.create({
+        jar,
+        maxRedirects: 0, // DON'T follow redirects automatically
+        validateStatus: (status) => status < 400, // Don't throw on 3xx
+        withCredentials: true
+    }));
     
     try {
         // Step 1: Initial request to get first cas session
