@@ -6,6 +6,25 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `npm run dev`
+
+**Recommended: Runs both the backend and frontend together.**
+
+This command starts:
+- Backend API server on [http://localhost:3001](http://localhost:3001)
+- Frontend React app on [http://localhost:3000](http://localhost:3000)
+
+### `npm run backend`
+
+Runs the MRU Schedule Backend Proxy server on [http://localhost:3001](http://localhost:3001).
+
+The backend handles:
+- Authentication with MRU's CAS system
+- Cookie management for authenticated requests
+- Calendar/schedule data retrieval
+
+**Note:** You need to also run `npm start` to start the frontend when using this command.
+
 ### `npm start`
 
 Runs the app in the development mode.\
@@ -13,6 +32,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+**Note:** Make sure the backend is running (`npm run backend`) before testing API calls.
 
 ### `npm test`
 
