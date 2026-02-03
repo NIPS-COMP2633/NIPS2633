@@ -140,7 +140,7 @@ function BookmarkletPage() {
       <div className="bookmarklet-container">
         <h1>Install Uni-Cal Bookmarklet</h1>
         <p className="instructions">
-          Install in 30 seconds! Just drag a button to your bookmarks bar.
+          Import events from course outlines. Uses AI: result may vary.
         </p>
 
         {/* Loading Indicator */}
