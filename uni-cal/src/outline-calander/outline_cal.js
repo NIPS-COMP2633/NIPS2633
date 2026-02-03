@@ -1,357 +1,136 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './outline_cal.css';
-import { processImportData, STORAGE_KEY } from '../utils/dataProcessor';
-import {gapiLoaded, gisLoaded, handleAuthClick} from '../client-side-scripts/calendar_auth'
-import {addNewCalendar, addEvents} from '../client-side-scripts/export_events'
-import eventsData from '../test_file.json'
+import { processImportData, parseHTMLForCourseData, STORAGE_KEY } from './utils/dataProcessor';
+import { generateBookmarkletCode, copyToClipboard as copyText } from './utils/bookmarkletGenerator';
+import { autoCheckClipboard } from './utils/clipboardHandler';
+import { mockUploadToGoogleCalendar } from '../client-side-scripts/outline_google_upoad';
+
+
 
 function BookmarkletPage() {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [showCode, setShowCode] = useState(false);
-  const [importStatus, setImportStatus] = useState('listening'); // listening, received, processing, success, error
+  const [importStatus, setImportStatus] = useState('listening');
   const [importedData, setImportedData] = useState(null);
   const [processedEvents, setProcessedEvents] = useState([]);
-  const [allImportedCourses, setAllImportedCourses] = useState([]); // Accumulate all course data
-  const [receivedCourses, setReceivedCourses] = useState([]); // Accumulate course titles
-  const [error, setError] = useState(null);
+  const [allImportedCourses, setAllImportedCourses] = useState([]);
   const bookmarkletLinkRef = useRef(null);
-
-  // Bookmarklet code - copies course data to clipboard, which is automatically pulled when our page is focussed
-  const bookmarkletCode = `javascript:(function(){try{const htmlData={timestamp:Date.now(),url:window.location.href,html:document.body.innerHTML};navigator.clipboard.writeText(JSON.stringify(htmlData)).then(()=>{alert('Course data saved\\n \\n Switch to the Uni-Cal tab');}).catch(()=>{const textarea=document.createElement('textarea');textarea.value=JSON.stringify(htmlData);document.body.appendChild(textarea);textarea.select();document.execCommand('copy');document.body.removeChild(textarea);alert('Course data copied to clipboard!\\n\\n1. Switch to the Uni-Cal tab\\n2. Click "Import from Clipboard"');});}catch(error){alert('Error: '+error.message);}})();`;
+  const bookmarkletCode = generateBookmarkletCode();
 
 
-  // Set href using ref to avoid React warning about javascript: URLs
+  // Set bookmarklet href
   useEffect(() => {
     if (bookmarkletLinkRef.current) {
       bookmarkletLinkRef.current.href = bookmarkletCode;
     }
   }, [bookmarkletCode]);
 
-  useEffect(() => {
-    gapiLoaded()
-    gisLoaded()
-  }, [])
 
-  // Check if a course is a duplicate
-  const isDuplicateCourse = (newCourse) => {
-    return allImportedCourses.some(existingCourse => {
-      // Match by title and code combination
-      const titleMatch = existingCourse.title.toLowerCase().trim() === newCourse.title.toLowerCase().trim();
-      const codeMatch = existingCourse.code?.toLowerCase().trim() === newCourse.code?.toLowerCase().trim();
+
+  // Process imported data
+  const processImportedData = useCallback(async (rawData) => {
+    try {
+      window.scrollTo(0, 0);
+      setImportStatus('received');
+      setImportedData(rawData);
       
-      // Consider it a duplicate if both title and code match (or if code is missing, just title)
-      if (newCourse.code && existingCourse.code) {
-        return titleMatch && codeMatch;
+      setImportStatus('processing');
+      const result = await processImportData(rawData);
+      
+      if (result.success) {
+        // Add the processed courses (duplicates already filtered)
+        setAllImportedCourses(prev => [...prev, ...result.courses]);
+        setProcessedEvents(prev => [...prev, ...result.courses]);
+        setImportStatus('success');
+        setTimeout(() => setImportStatus('listening'), 2000);
+      } else {
+        alert(result.error || 'Failed to process course data');
+        setImportStatus('error');
       }
-      return titleMatch;
-    });
-  };
+    } catch (err) {
+      console.error('Error processing import data:', err);
+      alert('Failed to parse course data: ' + err.message);
+      setImportStatus('error');
+    }
+  }, []);
+
+
 
   // Auto-check clipboard when window gains focus
   useEffect(() => {
     let lastClipboardCheck = null;
 
     const handleWindowFocus = async () => {
-      // Only auto-check when in listening state (ready for import)
-      if (importStatus !== 'listening' && importStatus !== 'success') {
-        return;
-      }
+      if (importStatus !== 'listening' && importStatus !== 'success') return;
 
-      try {
-        // Try to read clipboard automatically
-        const clipboardText = await navigator.clipboard.readText();
+      const { data, clipboardText } = await autoCheckClipboard(lastClipboardCheck);
+      lastClipboardCheck = clipboardText;
+
+      if (data) {
+        // Extract course title early to check for duplicates BEFORE processing
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.html;
+        const courseTitle = tempDiv.querySelector('h1')?.textContent?.trim() || 'Unnamed Course';
         
-        // Don't process if clipboard is empty or unchanged
-        if (!clipboardText || clipboardText === lastClipboardCheck) {
+        // Check if this course already exists
+        const isDuplicate = allImportedCourses.some(course => 
+          course.title.toLowerCase().trim() === courseTitle.toLowerCase().trim()
+        );
+        
+        if (isDuplicate) {
+          console.log(`Course "${courseTitle}" already imported, skipping...`);
           return;
         }
-
-        lastClipboardCheck = clipboardText;
-
-        // Try to parse as JSON
-        const data = JSON.parse(clipboardText);
         
-        // Check if it looks like our bookmarklet data
-        if (data.html && data.url && data.timestamp) {
-          console.log('Auto-detected course data in clipboard!');
-          
-          // Automatically trigger import
-          setError(null);
-          setImportStatus('processing');
-          parseAndProcessHTML(data.html, data.url);
-        }
-      } catch (error) {
-        // Silently fail - clipboard might not have valid data or permission denied
-        // User can still use manual import button
-        console.log('Auto-clipboard check skipped:', error.message);
+        setImportStatus('processing');
+        const importData = parseHTMLForCourseData(data.html, data.url, data.pdfData);
+        processImportedData(importData);
       }
     };
 
-    // Listen for window focus events
     window.addEventListener('focus', handleWindowFocus);
+    return () => window.removeEventListener('focus', handleWindowFocus);
+  }, [importStatus, processImportedData, allImportedCourses]);
 
-    return () => {
-      window.removeEventListener('focus', handleWindowFocus);
-    };
-  }, [importStatus]);
 
-  // Handle importing data from clipboard
-  const handleImportFromClipboard = async () => {
-    try {
-      setError(null);
-      setImportStatus('processing');
-      
-      // Read from clipboard
-      const clipboardText = await navigator.clipboard.readText();
-      
-      if (!clipboardText) {
-        throw new Error('Clipboard is empty. Make sure you clicked the bookmarklet first.');
-      }
-      
-      // Parse the JSON data
-      const data = JSON.parse(clipboardText);
-      
-      // Validate it has the expected structure
-      if (!data.html || !data.url || !data.timestamp) {
-        throw new Error('Invalid data format. Make sure you copied data from the bookmarklet.');
-      }
-      
-      console.log('Received HTML from clipboard:', data.url);
-      parseAndProcessHTML(data.html, data.url);
-      
-    } catch (error) {
-      console.error('Error importing from clipboard:', error);
-      if (error.message.includes('Clipboard is empty') || error.message.includes('Invalid data format')) {
-        setError(error.message);
-      } else if (error instanceof SyntaxError) {
-        setError('Invalid data in clipboard. Make sure you copied from the bookmarklet.');
-      } else {
-        setError('Failed to read from clipboard: ' + error.message);
-      }
-      setImportStatus('error');
-    }
-  };
 
-  // Clear imported data and reset state
+  // Clear all data
   const handleClearData = () => {
     setImportStatus('listening');
     setImportedData(null);
     setProcessedEvents([]);
     setAllImportedCourses([]);
-    setReceivedCourses([]);
-    setError(null);
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Manual check for data (for testing purposes)
-  const handleManualCheck = () => {
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    if (storedData) {
-      try {
-        const rawData = JSON.parse(storedData);
-        processImportedData(rawData);
-      } catch (err) {
-        setError('Failed to parse stored data: ' + err.message);
-        setImportStatus('error');
-      }
-    } else {
-      alert('No data found in localStorage. Make sure the bookmarklet has been run on a D2L page.');
-    }
-  };
-
+  // Export to calendar
   const handleExportToCalendar = async () => {
     try {
-      handleAuthClick(() => {
-        addEvents(eventsData, 'primary');
-      });
+      setImportStatus('processing');
+      
+      // Create 2D array: each element is an array of events from a course
+      const allEventsArray = processedEvents.map(course => course.events || []);
+      mockUploadToGoogleCalendar(allEventsArray);
+      
+      setTimeout(handleClearData, 1000);
     } catch (error) {
-      setError('Failed: ' + error.message);
+      alert('Failed to export events: ' + error.message);
+      setImportStatus('error');
     }
   };
-  
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(bookmarkletCode).then(() => {
+
+  // Copy bookmarklet code
+  const handleCopyBookmarklet = async () => {
+    const success = await copyText(bookmarkletCode);
+    if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
-    }).catch(err => {
-      console.error('Failed to copy:', err);
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = bookmarkletCode;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        setCopied(true);
-        setTimeout(() => setCopied(false), 3000);
-      } catch (err) {
-        console.error('Fallback copy failed:', err);
-      }
-      document.body.removeChild(textArea);
-    });
-  };
-
-  // Parse HTML and extract course data
-  const parseAndProcessHTML = (html, sourceUrl) => {
-    try {
-      setImportStatus('received');
-      setError(null);
-
-      // Create a temporary DOM element to parse the HTML
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
-
-      // Extract course data from the HTML
-      const courseTitle = tempDiv.querySelector('h1')?.textContent?.trim() || 'Unnamed Course';
-      const courseCode = tempDiv.querySelector('.d2l-course-code, .course-code')?.textContent?.trim() || '';
-      
-      let scheduleData = {
-        code: courseCode || 'UNKNOWN',
-        title: courseTitle,
-        days: '',
-        startTime: '',
-        endTime: '',
-        location: '',
-        instructor: ''
-      };
-
-      const pageText = tempDiv.innerText || tempDiv.textContent;
-
-      console.log('Extracted from HTML:', {
-        title: courseTitle,
-        code: courseCode,
-        pageLength: pageText.length
-      });
-
-      // Extract time (e.g., "1:00 PM - 2:30 PM")
-      const timeMatch = pageText.match(/(\d{1,2}:\d{2}\s*(?:AM|PM)?)\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM)?)/i);
-      if (timeMatch) {
-        scheduleData.startTime = timeMatch[1];
-        scheduleData.endTime = timeMatch[2];
-      }
-
-      // Extract days
-      const daysMatch = pageText.match(/(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mon|Tue|Wed|Thu|Fri|Sat|Sun|M|T|W|R|F|S|U)/gi);
-      if (daysMatch && daysMatch.length > 0) {
-        const dayMap = {
-          'sunday': '1', 'sun': '1', 'u': '1',
-          'monday': '2', 'mon': '2', 'm': '2',
-          'tuesday': '3', 'tue': '3', 't': '3',
-          'wednesday': '4', 'wed': '4', 'w': '4',
-          'thursday': '5', 'thu': '5', 'r': '5',
-          'friday': '6', 'fri': '6', 'f': '6',
-          'saturday': '7', 'sat': '7', 's': '7'
-        };
-        const uniqueDays = new Set();
-        daysMatch.forEach(day => {
-          const normalized = day.toLowerCase();
-          if (dayMap[normalized]) {
-            uniqueDays.add(dayMap[normalized]);
-          }
-        });
-        scheduleData.days = Array.from(uniqueDays).sort().join(' ');
-      }
-
-      // Extract location
-      const locationMatch = pageText.match(/(?:Room|Location|Building)\s*:?\s*([A-Z]{1,3}\s*\d{1,4}[A-Z]?)/i);
-      if (locationMatch) {
-        scheduleData.location = locationMatch[1];
-      }
-
-      // Extract instructor
-      const instructorMatch = pageText.match(/(?:Instructor|Professor|Teacher)\s*:?\s*([A-Z][a-z]+\s+[A-Z][a-z]+)/i);
-      if (instructorMatch) {
-        scheduleData.instructor = instructorMatch[1];
-      }
-
-      console.log('Final schedule data:', scheduleData);
-
-      // Warn if critical data is missing
-      if (!scheduleData.startTime || !scheduleData.endTime) {
-        console.warn('No schedule times found in HTML. Course will be imported but may need manual time entry.');
-      }
-
-      // Create the import data structure
-      const importData = {
-        timestamp: Date.now(),
-        source: sourceUrl,
-        timezone: 'America/Edmonton',
-        courses: [scheduleData]
-      };
-
-      // Process using existing pipeline
-      processImportedData(importData);
-
-    } catch (error) {
-      console.error('Error parsing HTML:', error);
-      setError('Failed to parse course data: ' + error.message);
-      setImportStatus('error');
     }
   };
 
-  // Process imported data
-  const processImportedData = (rawData) => {
-    try {
-      setImportStatus('received');
-      setError(null);
-      
-      setImportedData(rawData);
-      
-      // Check for duplicates before adding
-      if (rawData.courses && rawData.courses.length > 0) {
-        const newCourses = rawData.courses.filter(course => {
-          const isDuplicate = isDuplicateCourse(course);
-          if (isDuplicate) {
-            console.warn('Duplicate course detected and skipped:', course.title, course.code);
-          }
-          return !isDuplicate;
-        });
-        
-        // If all courses are duplicates, silently skip
-        if (newCourses.length === 0) {
-          console.log('All courses already imported, skipping...');
-          setImportStatus('listening');
-          return;
-        }
-        
-        // Add only non-duplicate courses
-        setAllImportedCourses(prev => [...prev, ...newCourses]);
-        
-        // Add course titles to the received list
-        const newCourseTitles = newCourses.map(c => ({
-          title: c.title || c.code || 'Unnamed Course',
-          code: c.code,
-          timestamp: rawData.timestamp
-        }));
-        setReceivedCourses(prev => [...prev, ...newCourseTitles]);
-      }
-      
-      // Process the data
-      setImportStatus('processing');
-      const result = processImportData(rawData);
-      
-      if (result.success) {
-        setProcessedEvents(prev => [...prev, ...result.events]);
-        setImportStatus('success');
-        
-        // Reset to listening after 2 seconds to allow importing more courses
-        setTimeout(() => {
-          if (importStatus === 'success') {
-            setImportStatus('listening');
-          }
-        }, 2000);
-      } else {
-        setError(result.error || 'Failed to process course data');
-        setImportStatus('error');
-      }
-    } catch (err) {
-      console.error('Error processing import data:', err);
-      setError('Failed to parse course data: ' + err.message);
-      setImportStatus('error');
-    }
-  };
+
 
   return (
     <div className="bookmarklet-page">
@@ -361,8 +140,19 @@ function BookmarkletPage() {
       <div className="bookmarklet-container">
         <h1>Install Uni-Cal Bookmarklet</h1>
         <p className="instructions">
-          Install in 30 seconds! Just drag a button to your bookmarks bar.
+          Import events from course outlines. Uses AI: result may vary.
         </p>
+
+        {/* Loading Indicator */}
+        {importStatus === 'processing' && (
+          <div className="import-loading">
+            <div className="loading-spinner"></div>
+            <h2>Processing Course Data...</h2>
+            <p className="loading-info">
+              Extracting course information using AI. This may take a few seconds.
+            </p>
+          </div>
+        )}
 
         {/* Import Preview Section */}
         {importedData && processedEvents.length > 0 && (
@@ -376,22 +166,20 @@ function BookmarkletPage() {
                 <div key={idx} className="course-card">
                   <h3>{course.title}</h3>
                   <div className="course-details">
-                    <div className="detail-row">
-                      <strong>Code:</strong> <span>{course.code}</span>
-                    </div>
-                    {course.days && (
+                    {course.events && course.events.length > 0 ? (
                       <div className="detail-row">
-                        <strong>Days:</strong> <span>{course.days}</span>
+                        <strong>Events:</strong>
+                        <div className="events-container">
+                          {course.events.map((event, eventIdx) => (
+                            <div key={eventIdx} className="event-item">
+                              {event.summary}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    )}
-                    {course.startTime && course.endTime && (
-                      <div className="detail-row">
-                        <strong>Time:</strong> <span>{course.startTime} - {course.endTime}</span>
-                      </div>
-                    )}
-                    {(!course.startTime || !course.endTime) && (
+                    ) : (
                       <div className="detail-row warning">
-                        <strong>Time:</strong> <span>Not found - will use default (9 AM - 10 AM)</span>
+                        <strong>Events:</strong> <span>No events found</span>
                       </div>
                     )}
                     {course.location && (
@@ -446,6 +234,7 @@ function BookmarkletPage() {
             <h2>Step 2: Drag This Button</h2>
             <div className="step-content">
               <p className="step-description">Click and drag this button to your bookmarks bar:</p>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a 
                 ref={bookmarkletLinkRef}
                 className="bookmarklet-link draggable"
@@ -471,10 +260,10 @@ function BookmarkletPage() {
         <div className="how-to-use">
           <h2>Step 3: Import your Courses</h2>
           <ol>
-            <li><strong>Find you ouline on D2L</strong> - Navigate to your course outline page in a new tab (<a href="https://learn.mru.ca/d2l/home" target="_blank" rel="noopener noreferrer">learn.mru.ca</a>)</li>
-            <li><strong>Click the Bookmarklet</strong> - Once you are at the page with your outline, click the "Uni-Cal Importer" button in your bookmarks bar on the D2L page</li>
+            <li><strong>Find you ouline on D2L</strong> - Navigate to your course outline page in a new tab <a class="mru_link" href="https://learn.mru.ca/d2l/home" target="_blank" rel="noopener noreferrer">learn.mru.ca</a></li>
+            <li><strong>Click the Bookmarklet</strong> - Once you have found the page with your outline, click the "Uni-Cal Importer" button in your bookmarks bar on the D2L page</li>
             <li><strong>Switch Back Here</strong> - Come back to this Uni-Cal tab, and tada! Your course is there!</li>
-            <li><strong>Review & Repear</strong> - Check the course details, and continue adding until you're done </li>
+            <li><strong>Review & Repeat</strong> - Check the course details, and continue adding until you're done </li>
           </ol>
         </div>
 
@@ -488,44 +277,41 @@ function BookmarkletPage() {
           </div>
         </div>
 
-<details className="troubleshooting">
-            <summary>Having trouble? Try the manual method</summary>
-            <div className="method-card secondary">
-              <h3> Alternative: Manual Install</h3>
-              <div className="step-content">
-                <p className="step-description">If dragging doesn't work, copy the code manually:</p>
-                <div className="code-section">
-                  <button 
-                    className={`copy-button ${copied ? 'copied' : ''}`}
-                    onClick={copyToClipboard}
-                  >
-                    {copied ? '✓ Copied!' : 'Copy Code'}
-                  </button>
-                  <button 
-                    className="toggle-code-button"
-                    onClick={() => setShowCode(!showCode)}
-                  >
-                    {showCode ? 'Hide Code' : 'View Code'}
-                  </button>
-                </div>
-                {showCode && (
-                  <div className="code-display">
-                    <code>{bookmarkletCode}</code>
-                  </div>
-                )}
-                <ol className="manual-steps">
-                  <li>Click "Copy Code" above</li>
-                  <li>Right-click your bookmarks bar → Add Page/Bookmark</li>
-                  <li>Name: "Uni-Cal Importer"</li>
-                  <li>URL/Location: Paste the code (make sure it starts with <code>javascript:</code>)</li>
-                  <li>Save</li>
-                </ol>
+        <details className="troubleshooting">
+          <summary>Having trouble? Try the manual method</summary>
+          <div className="method-card secondary">
+            <h3> Alternative: Manual Install</h3>
+            <div className="step-content">
+              <p className="step-description">If dragging doesn't work, copy the code manually:</p>
+              <div className="code-section">
+                <button 
+                  className={`copy-button ${copied ? 'copied' : ''}`}
+                  onClick={handleCopyBookmarklet}
+                >
+                  {copied ? '✓ Copied!' : 'Copy Code'}
+                </button>
+                <button 
+                  className="toggle-code-button"
+                  onClick={() => setShowCode(!showCode)}
+                >
+                  {showCode ? 'Hide Code' : 'View Code'}
+                </button>
               </div>
+              {showCode && (
+                <div className="code-display">
+                  <code>{bookmarkletCode}</code>
+                </div>
+              )}
+              <ol className="manual-steps">
+                <li>Click "Copy Code" above</li>
+                <li>Right-click your bookmarks bar → Add Page/Bookmark</li>
+                <li>Name: "Uni-Cal Importer"</li>
+                <li>URL/Location: Paste the code (make sure it starts with <code>javascript:</code>)</li>
+                <li>Save</li>
+              </ol>
             </div>
-          </details>
- 
-
-
+          </div>
+        </details>
       </div>
     </div>
   );
