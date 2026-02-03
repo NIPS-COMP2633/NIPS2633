@@ -4,8 +4,7 @@ import './outline_cal.css';
 import { processImportData, parseHTMLForCourseData, STORAGE_KEY } from './utils/dataProcessor';
 import { generateBookmarkletCode, copyToClipboard as copyText } from './utils/bookmarkletGenerator';
 import { autoCheckClipboard } from './utils/clipboardHandler';
-import { filterDuplicateCourses } from './utils/courseUtils';
-import { exportToGoogleCalendar } from './utils/calendarExporter';
+import { mockUploadToGoogleCalendar } from '../client-side-scripts/outline_google_upoad';
 
 
 
@@ -37,22 +36,12 @@ function BookmarkletPage() {
       setImportStatus('received');
       setImportedData(rawData);
       
-      if (rawData.courses && rawData.courses.length > 0) {
-        const newCourses = filterDuplicateCourses(rawData.courses, allImportedCourses);
-        
-        if (newCourses.length === 0) {
-          console.log('All courses already imported, skipping...');
-          setImportStatus('listening');
-          return;
-        }
-        
-        setAllImportedCourses(prev => [...prev, ...newCourses]);
-      }
-      
       setImportStatus('processing');
       const result = await processImportData(rawData);
       
       if (result.success) {
+        // Add the processed courses (duplicates already filtered)
+        setAllImportedCourses(prev => [...prev, ...result.courses]);
         setProcessedEvents(prev => [...prev, ...result.courses]);
         setImportStatus('success');
         setTimeout(() => setImportStatus('listening'), 2000);
@@ -65,7 +54,7 @@ function BookmarkletPage() {
       alert('Failed to parse course data: ' + err.message);
       setImportStatus('error');
     }
-  }, [allImportedCourses]);
+  }, []);
 
 
 
@@ -80,6 +69,21 @@ function BookmarkletPage() {
       lastClipboardCheck = clipboardText;
 
       if (data) {
+        // Extract course title early to check for duplicates BEFORE processing
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.html;
+        const courseTitle = tempDiv.querySelector('h1')?.textContent?.trim() || 'Unnamed Course';
+        
+        // Check if this course already exists
+        const isDuplicate = allImportedCourses.some(course => 
+          course.title.toLowerCase().trim() === courseTitle.toLowerCase().trim()
+        );
+        
+        if (isDuplicate) {
+          console.log(`Course "${courseTitle}" already imported, skipping...`);
+          return;
+        }
+        
         setImportStatus('processing');
         const importData = parseHTMLForCourseData(data.html, data.url, data.pdfData);
         processImportedData(importData);
@@ -88,7 +92,7 @@ function BookmarkletPage() {
 
     window.addEventListener('focus', handleWindowFocus);
     return () => window.removeEventListener('focus', handleWindowFocus);
-  }, [importStatus, processImportedData]);
+  }, [importStatus, processImportedData, allImportedCourses]);
 
 
 
@@ -105,8 +109,11 @@ function BookmarkletPage() {
   const handleExportToCalendar = async () => {
     try {
       setImportStatus('processing');
-      const result = await exportToGoogleCalendar(processedEvents);
-      alert(result.message);
+      
+      // Create 2D array: each element is an array of events from a course
+      const allEventsArray = processedEvents.map(course => course.events || []);
+      mockUploadToGoogleCalendar(allEventsArray);
+      
       setTimeout(handleClearData, 1000);
     } catch (error) {
       alert('Failed to export events: ' + error.message);
@@ -162,11 +169,13 @@ function BookmarkletPage() {
                     {course.events && course.events.length > 0 ? (
                       <div className="detail-row">
                         <strong>Events:</strong>
-                        <ul className="events-list">
+                        <div className="events-container">
                           {course.events.map((event, eventIdx) => (
-                            <li key={eventIdx}>{event.summary}</li>
+                            <div key={eventIdx} className="event-item">
+                              {event.summary}
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     ) : (
                       <div className="detail-row warning">
@@ -251,10 +260,10 @@ function BookmarkletPage() {
         <div className="how-to-use">
           <h2>Step 3: Import your Courses</h2>
           <ol>
-            <li><strong>Find you ouline on D2L</strong> - Navigate to your course outline page in a new tab (<a href="https://learn.mru.ca/d2l/home" target="_blank" rel="noopener noreferrer">learn.mru.ca</a>)</li>
-            <li><strong>Click the Bookmarklet</strong> - Once you are at the page with your outline, click the "Uni-Cal Importer" button in your bookmarks bar on the D2L page</li>
+            <li><strong>Find you ouline on D2L</strong> - Navigate to your course outline page in a new tab <a class="mru_link" href="https://learn.mru.ca/d2l/home" target="_blank" rel="noopener noreferrer">learn.mru.ca</a></li>
+            <li><strong>Click the Bookmarklet</strong> - Once you have found the page with your outline, click the "Uni-Cal Importer" button in your bookmarks bar on the D2L page</li>
             <li><strong>Switch Back Here</strong> - Come back to this Uni-Cal tab, and tada! Your course is there!</li>
-            <li><strong>Review & Repear</strong> - Check the course details, and continue adding until you're done </li>
+            <li><strong>Review & Repeat</strong> - Check the course details, and continue adding until you're done </li>
           </ol>
         </div>
 

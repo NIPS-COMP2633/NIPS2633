@@ -28,16 +28,6 @@ export function validateImportData(data) {
   );
 }
 
-/**
- * Sanitize HTML content to prevent XSS
- * @param {string} html - Raw HTML content
- * @returns {string} - Sanitized content
- */
-function sanitizeHTML(html) {
-  const div = document.createElement('div');
-  div.textContent = html;
-  return div.innerHTML;
-}
 
 /**
  * Process PDF data and extract events from AI response
@@ -45,10 +35,6 @@ function sanitizeHTML(html) {
  * @returns {Array} - Array of event objects with summary field
  */
 async function processPDFData(pdfData) {
-  console.log('processPDFData called with:', {
-    isArray: Array.isArray(pdfData),
-    length: pdfData?.length
-  });
   
   if (!pdfData || pdfData.length === 0) {
     console.log('No PDF data to process - returning empty array');
@@ -58,17 +44,13 @@ async function processPDFData(pdfData) {
   // Call OpenRouter API with PDF data
   try {
     const responseData = await makeOpenRouterCalls(JSON.stringify(pdfData, null, 2));
-    console.log('OpenRouter API Full Response:', responseData);
     
     // Extract the actual message content from the API response
     if (responseData?.choices?.[0]?.message?.content) {
-      const aiMessage = responseData.choices[0].message.content;
-      console.log('AI Response Content:', aiMessage);
-      
+      const aiMessage = responseData.choices[0].message.content;      
       // Try to parse as JSON if it's a JSON response
       try {
         const parsedContent = JSON.parse(aiMessage);
-        console.log('Parsed AI JSON Response:', parsedContent);
         
         // If it's an array of events, return them
         if (Array.isArray(parsedContent)) {
@@ -99,12 +81,6 @@ async function processPDFData(pdfData) {
 export async function processImportData(rawData) {
   try {
     const data = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
-    
-    console.log('processImportData called with data:', {
-      hasPdfData: !!data.pdfData,
-      pdfDataLength: data.pdfData?.length,
-      coursesCount: data.courses?.length
-    });
     
     // Extract events from PDF data via OpenRouter AI
     const aiExtractedEvents = data.pdfData ? await processPDFData(data.pdfData) : [];

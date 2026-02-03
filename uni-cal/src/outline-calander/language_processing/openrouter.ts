@@ -10,12 +10,29 @@ export async function makeOpenRouterCalls(prompt: string) {
     const OPENROUTER_API_KEY = (await apiKeyResponse.text()).trim();
 
     // Sanitize prompt - remove control characters and ensure valid UTF-8
-    // eslint-disable-next-line no-control-regex
     const sanitizedPrompt = prompt
+      // eslint-disable-next-line no-control-regex
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Remove control characters except \n, \r, \t
       .replace(/\uFFFD/g, ''); // Remove replacement characters
 
-    const systemInstructions = "Respond in *only* JSON. Find the following values in the user prompt, and return an array of JSON objects in this format: { \"iCalUID\": \"<IGNORE THIS>\", \"summary\": \"<course-title> - <event type (exam, assignment, etc)>\", \"status\": \"confirmed\", \"start\": { \"dateTime\": \"<start-datetime>\", \"timeZone\": \"America/Edmonton\" }, \"end\": { \"dateTime\": \"<end-datetime>\", \"timeZone\": \"America/Edmonton\" }, \"transparency\": \"opaque\" } for every event foundcd";
+    const systemInstructions = `
+      Respond **only** in JSON. Find the following values in the user prompt, and return an array of JSON objects in this format:
+      {
+        "iCalUID": "<IGNORE THIS>",
+        "summary": "<course-title> - <event type (exam, assignment, etc)>",
+        "status": "confirmed",
+        "start": {
+          "dateTime": "<start-datetime>",
+          "timeZone": "America/Edmonton"
+        },
+        "end": {
+          "dateTime": "<end-datetime>",
+          "timeZone": "America/Edmonton"
+        },
+        "transparency": "opaque"
+      }
+      for every event found.
+    `.replace(/\s+/g, ' ').trim();
 
     const requestBody = {
       model: "arcee-ai/trinity-large-preview:free",
