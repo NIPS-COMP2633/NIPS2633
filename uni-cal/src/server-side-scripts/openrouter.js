@@ -32,7 +32,7 @@ exports.handler = async (event, context) => {
             .replace(/\uFFFD/g, ''); // Remove replacement characters
 
         const systemInstructions = `
-      Respond **only** in JSON. Find the following values in the user prompt, and return an array of JSON objects in this format:
+      Respond **only** in JSON. **NO OTHER CHARACTERS OR WORDS**. Find the following values in the user prompt, and return an array of JSON objects in this format:
     {
     "summary": "<course-title> - <event type (exam, assignment, etc)>",
     "description": "<short description>",
