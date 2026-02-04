@@ -1,3 +1,5 @@
+/* global gapi, google */
+
 const CLIENT_ID = process.env.google_calander_client_id;
 const API_KEY = process.env.google_calander_api_key;
 const DISCOVERY_DOC = process.env.google_calander_discovery_doc;
