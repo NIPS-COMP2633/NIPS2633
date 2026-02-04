@@ -53,7 +53,7 @@ export async function gapiLoaded() {
             apiKey: config.apiKey,
             discoveryDocs: [config.discoveryDoc],
         });
-        
+
         gapiInited = true;
         console.log('GAPI client initialized successfully');
     } catch (error) {
