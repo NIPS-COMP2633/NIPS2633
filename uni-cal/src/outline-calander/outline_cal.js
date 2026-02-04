@@ -30,10 +30,13 @@ function BookmarkletPage() {
       // Convert MRU events to course format
       const mruCourse = {
         title: 'MRU Schedule',
-        events: location.state.mruEvents,
+        events: location.state.mruEvents, // Array of event objects
         location: 'Various',
         instructor: 'From MRU Schedule Builder'
       };
+      
+      console.log('Formatted MRU course:', mruCourse);
+      console.log('Number of MRU events:', mruCourse.events.length);
       
       setAllImportedCourses(prev => [...prev, mruCourse]);
       setProcessedEvents(prev => [...prev, mruCourse]);
@@ -138,6 +141,11 @@ function BookmarkletPage() {
 
       // Create 2D array: each element is an array of events from a course
       const allEventsArray = processedEvents.map(course => course.events || []);
+      console.log('Exporting courses:', processedEvents.length);
+      console.log('Total event arrays:', allEventsArray.length);
+      console.log('Events per course:', allEventsArray.map(arr => arr.length));
+      console.log('Complete 2D events array:', JSON.stringify(allEventsArray, null, 2));
+      
       await exportAllEvents(allEventsArray);
 
       // Note: redirect happens in exportAllEvents, so this may not execute
