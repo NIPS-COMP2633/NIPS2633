@@ -35,8 +35,7 @@ function BookmarkletPage() {
         instructor: 'From MRU Schedule Builder'
       };
 
-      console.log('Formatted MRU course:', mruCourse);
-      console.log('Number of MRU events:', mruCourse.events.length);
+
 
       setAllImportedCourses(prev => [...prev, mruCourse]);
       setProcessedEvents(prev => [...prev, mruCourse]);
@@ -211,7 +210,7 @@ function BookmarkletPage() {
             </p>
             <div className="courses-list">
               {allImportedCourses.map((course, idx) => (
-                <div key={idx} className={`course-card ${course.title === 'MRU Schedule' ? 'mru-schedule-card' : ''}`}>
+                <div key={idx} className={`course-card ${course.title === 'MRU Class Schedule' ? 'mru-schedule-card' : ''}`}>
                   <h3>{course.title}</h3>
                   <div className="course-details">
                     {course.events && course.events.length > 0 ? (

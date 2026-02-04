@@ -68,7 +68,6 @@ function MRULogin() {
           return response.text(); // Get XML as text
         })
         .then(xmlData => {
-          console.log('Calendar data received:', xmlData);
 
           // Convert XML to JSON events
           const events = XmlToJsonConverter.convert(xmlData);
