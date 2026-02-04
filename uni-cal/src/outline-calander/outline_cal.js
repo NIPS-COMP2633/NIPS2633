@@ -4,7 +4,7 @@ import './outline_cal.css';
 import { processImportData, parseHTMLForCourseData, STORAGE_KEY } from './utils/dataProcessor';
 import { generateBookmarkletCode, copyToClipboard as copyText } from './utils/bookmarkletGenerator';
 import { autoCheckClipboard } from './utils/clipboardHandler';
-import { mockUploadToGoogleCalendar } from '../client-side-scripts/outline_google_upoad';
+import { exportAllEvents } from '../client-side-scripts/outline_google_upoad';
 
 
 
@@ -112,7 +112,7 @@ function BookmarkletPage() {
       
       // Create 2D array: each element is an array of events from a course
       const allEventsArray = processedEvents.map(course => course.events || []);
-      mockUploadToGoogleCalendar(allEventsArray);
+      await exportAllEvents(allEventsArray);
       
       setTimeout(handleClearData, 1000);
     } catch (error) {

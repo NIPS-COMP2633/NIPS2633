@@ -17,6 +17,6 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>
-  <script async defer src="https://apis.google.com/js/api.js"></script>
-  <script async defer src="https://accounts.google.com/gsi/client"></script>
+  <script async defer src="https://apis.google.com/js/api.js" onload="window.gapiLoaded = true;"></script>
+  <script async defer src="https://accounts.google.com/gsi/client" onload="window.gisLoaded = true;"></script>
 </html>
