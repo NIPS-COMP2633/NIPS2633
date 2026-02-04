@@ -150,7 +150,7 @@ function BookmarkletPage() {
       )}
 
       <div className="button-group">
-        <button type="button" className="skip-btn" onClick={() => navigate('/')}>Skip This Step</button>
+        <button type="button" className="skip-btn" onClick={() => navigate('/')}>Skip and Export to Google Calander</button>
       </div>
       <div className="bookmarklet-container">
         <h1>Install Uni-Cal Bookmarklet</h1>

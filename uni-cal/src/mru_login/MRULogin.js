@@ -6,6 +6,8 @@ import { mru_login } from '../client-side-scripts/mock';
 function MRULogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -37,19 +39,38 @@ function MRULogin() {
         })
         .then(xmlData => {
           console.log('Calendar data received:', xmlData);
-          // TODO: Parse XML data here or pass it to next component
-          // Navigate to bookmarklet page after successful login
-          navigate('/bookmarklet');
+          // Show success notification
+          setShowSuccess(true);
+          // Navigate to bookmarklet page after a brief delay
+          setTimeout(() => {
+            navigate('/bookmarklet');
+          }, 1500);
         })
         .catch(error => {
           console.error('Error fetching calendar:', error);
-          alert('Login failed. Please check your credentials and try again.');
+          setShowError(true);
+          // Auto-hide error notification after 4 seconds
+          setTimeout(() => {
+            setShowError(false);
+          }, 4000);
         });
     }
   };
 
   return (
     <div className="mru-login-page">
+      {showSuccess && (
+        <div className="success-notification">
+          <span className="success-icon">✓</span>
+          <span className="success-message">Login successful! Loading your calendar...</span>
+        </div>
+      )}
+      {showError && (
+        <div className="error-notification">
+          <span className="error-icon">✕</span>
+          <span className="error-message">Login failed. Please check your credentials and try again.</span>
+        </div>
+      )}
 
       <div className="login-container">
         <h2>MRU Login</h2>
