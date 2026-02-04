@@ -1,4 +1,4 @@
-import { handleAuthClick, gapiLoaded, gisLoaded } from './calendar_auth_client';
+import { handleAuthClick, gapiLoaded, gisLoaded, isInitialized } from './calendar_auth_client';
 import { addNewCalendar, addEvents } from './export_events';
 
 /**
@@ -23,13 +23,18 @@ export async function exportAllEvents(allEventsArray) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
 
-      // Initialize gapi client
-      gapiLoaded();
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Initialize gapi client and wait for completion
+      await gapiLoaded();
+      console.log('GAPI client initialized');
 
-      // Initialize gis
-      gisLoaded();
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Initialize gis and wait for completion
+      await gisLoaded();
+      console.log('GIS initialized');
+
+      // Double-check that everything is ready
+      if (!isInitialized()) {
+        throw new Error('Authentication clients failed to initialize properly');
+      }
     };
 
     waitForAPIs().then(() => {

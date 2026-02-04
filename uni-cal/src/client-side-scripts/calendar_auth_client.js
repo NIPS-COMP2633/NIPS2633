@@ -49,14 +49,20 @@ export async function gapiLoaded() {
  * Initialize the Google Identity Services client
  */
 export async function gisLoaded() {
-    const config = await fetchAuthConfig();
+    try {
+        const config = await fetchAuthConfig();
 
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: config.clientId,
-        scope: config.scopes,
-        callback: '', // defined later
-    });
-    gisInited = true;
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: config.clientId,
+            scope: config.scopes,
+            callback: '', // defined later
+        });
+        gisInited = true;
+        console.log('Google Identity Services initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Google Identity Services:', error);
+        throw error;
+    }
 }
 
 /**
@@ -91,6 +97,12 @@ async function storeToken(token) {
  * @param {Function} onAuthSuccess - Callback function to execute after successful authentication
  */
 export function handleAuthClick(onAuthSuccess) {
+    if (!tokenClient) {
+        const error = new Error('Token client not initialized. Please ensure gisLoaded() has completed.');
+        console.error(error);
+        throw error;
+    }
+
     tokenClient.callback = async (resp) => {
         console.log("Auth Response: ", resp);
 
@@ -144,6 +156,14 @@ export async function handleSignoutClick() {
             console.error("Failed to revoke token on server:", error);
         }
     }
+}
+
+/**
+ * Check if both GAPI and GIS are initialized
+ * @returns {boolean} True if both are initialized
+ */
+export function isInitialized() {
+    return gapiInited && gisInited && tokenClient !== null;
 }
 
 /**
