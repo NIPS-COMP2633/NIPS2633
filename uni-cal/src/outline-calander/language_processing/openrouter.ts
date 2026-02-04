@@ -17,20 +17,18 @@ export async function makeOpenRouterCalls(prompt: string) {
 
     const systemInstructions = `
       Respond **only** in JSON. Find the following values in the user prompt, and return an array of JSON objects in this format:
-      {
-        "iCalUID": "<IGNORE THIS>",
-        "summary": "<course-title> - <event type (exam, assignment, etc)>",
-        "status": "confirmed",
-        "start": {
-          "dateTime": "<start-datetime>",
-          "timeZone": "America/Edmonton"
-        },
-        "end": {
-          "dateTime": "<end-datetime>",
-          "timeZone": "America/Edmonton"
-        },
-        "transparency": "opaque"
-      }
+    {
+    "summary": "<course-title> - <event type (exam, assignment, etc)>",
+    "description": "<short description of what this is, max 10 words.>",
+    "location": "<class-room. Example: EA2009, B200>",
+    "start": {
+      "dateTime": "<start-datetime>",
+      "timeZone": "America/Edmonton"
+    },
+    "end": {
+      "dateTime": "<end-datetime>",
+      "timeZone": "America/Edmonton"
+    }
       for every event found.
     `.replace(/\s+/g, ' ').trim();
 
