@@ -917,12 +917,12 @@ a {
 }
 
 .course-card.mru-schedule-card {
-  border: 3px solid var(--accent-sage);
-  box-shadow: 0 6px 20px rgba(178, 205, 156, 0.3), var(--shadow-button);
+  border: 3px solid var(--border-secondary);
+  box-shadow: var(--shadow-container);
 }
 
 .course-card.mru-schedule-card:hover {
-  box-shadow: 0 8px 24px rgba(178, 205, 156, 0.4), var(--shadow-button-hover);
+  box-shadow: var(--shadow-container-hover);
 }
 
 .course-card h3 {
