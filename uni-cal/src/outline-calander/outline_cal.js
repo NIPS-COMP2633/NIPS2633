@@ -182,12 +182,11 @@ function BookmarkletPage() {
       )}
 
       <div className="button-group">
-        <button type="button" className="skip-btn" onClick={() => navigate('/')}>Skip and Export to Google Calander</button>
       </div>
       <div className="bookmarklet-container">
         <h1>Import to Google Calendar</h1>
         <p className="instructions">
-          You can Import events from your course outlines. Uses AI: result may vary.
+          Import events from your course outlines. Uses AI: result may vary.
         </p>
 
         {/* Loading Indicator */}
