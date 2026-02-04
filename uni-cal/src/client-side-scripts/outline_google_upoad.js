@@ -45,6 +45,10 @@ export async function exportAllEvents(allEventsArray) {
               
               const result = await addEvents(allEvents, calendarId);
               console.log(`Successfully added ${result.count} events`);
+              
+              // Redirect to Google Calendar to view the newly created calendar
+              window.location.href = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(calendarId)}`;
+              
               resolve(result);
             } catch (error) {
               console.error('Error adding events:', error);

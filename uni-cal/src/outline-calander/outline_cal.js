@@ -16,6 +16,7 @@ function BookmarkletPage() {
   const [importedData, setImportedData] = useState(null);
   const [processedEvents, setProcessedEvents] = useState([]);
   const [allImportedCourses, setAllImportedCourses] = useState([]);
+  const [isExporting, setIsExporting] = useState(false);
   const bookmarkletLinkRef = useRef(null);
   const bookmarkletCode = generateBookmarkletCode();
 
@@ -108,14 +109,16 @@ function BookmarkletPage() {
   // Export to calendar
   const handleExportToCalendar = async () => {
     try {
-      setImportStatus('processing');
+      setIsExporting(true);
       
       // Create 2D array: each element is an array of events from a course
       const allEventsArray = processedEvents.map(course => course.events || []);
       await exportAllEvents(allEventsArray);
       
+      // Note: redirect happens in exportAllEvents, so this may not execute
       setTimeout(handleClearData, 1000);
     } catch (error) {
+      setIsExporting(false);
       alert('Failed to export events: ' + error.message);
       setImportStatus('error');
     }
@@ -134,6 +137,18 @@ function BookmarkletPage() {
 
   return (
     <div className="bookmarklet-page">
+      {/* Export Loading Overlay */}
+      {isExporting && (
+        <div className="export-overlay">
+          <div className="export-modal">
+            <div className="export-spinner"></div>
+            <h2>Exporting to Google Calendar...</h2>
+            <p>Please wait while we create your calendar and add your events.</p>
+            <p className="export-hint">You will be redirected to Google Calendar when complete.</p>
+          </div>
+        </div>
+      )}
+      
       <div className="button-group">
         <button type="button" className="skip-btn" onClick={() => navigate('/')}>Skip This Step</button>
       </div>

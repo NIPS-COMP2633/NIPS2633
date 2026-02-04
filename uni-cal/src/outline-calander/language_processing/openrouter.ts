@@ -19,8 +19,8 @@ export async function makeOpenRouterCalls(prompt: string) {
       Respond **only** in JSON. Find the following values in the user prompt, and return an array of JSON objects in this format:
     {
     "summary": "<course-title> - <event type (exam, assignment, etc)>",
-    "description": "<short description of what this is, max 10 words.>",
-    "location": "<class-room. Example: EA2009, B200>",
+    "description": "<short description>",
+    "location": "<class-room. Example: lecture room>",
     "start": {
       "dateTime": "<start-datetime>",
       "timeZone": "America/Edmonton"
