@@ -15,10 +15,36 @@ function MRULogin() {
     if (username && password) {
       console.log('Login attempt:', { username, password });
       
-      mru_login(username, password);
+      // Call the calendar API endpoint
+      const requestBody = {
+        username: username,
+        password: password,
+        term: 20260150
+      };
       
-      // Navigate to bookmarklet page after login
-      navigate('/bookmarklet');
+      fetch('http://localhost:3001/api/get_calendar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text(); // Get XML as text
+      })
+      .then(xmlData => {
+        console.log('Calendar data received:', xmlData);
+        // TODO: Parse XML data here or pass it to next component
+        // Navigate to bookmarklet page after successful login
+        navigate('/bookmarklet');
+      })
+      .catch(error => {
+        console.error('Error fetching calendar:', error);
+        alert('Login failed. Please check your credentials and try again.');
+      });
     }
   };
 
