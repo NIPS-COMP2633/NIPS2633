@@ -21,7 +21,9 @@
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
+    "@types/node": "^22.10.5",
     "concurrently": "^8.0.0",
+    "netlify-cli": "^23.15.0",
     "nodemon": "^3.0.1"
   },
   "scripts": {

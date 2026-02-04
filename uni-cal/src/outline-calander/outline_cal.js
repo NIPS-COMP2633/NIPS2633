@@ -36,10 +36,10 @@ function BookmarkletPage() {
       window.scrollTo(0, 0);
       setImportStatus('received');
       setImportedData(rawData);
-      
+
       setImportStatus('processing');
       const result = await processImportData(rawData);
-      
+
       if (result.success) {
         // Add the processed courses (duplicates already filtered)
         setAllImportedCourses(prev => [...prev, ...result.courses]);
@@ -74,17 +74,17 @@ function BookmarkletPage() {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = data.html;
         const courseTitle = tempDiv.querySelector('h1')?.textContent?.trim() || 'Unnamed Course';
-        
+
         // Check if this course already exists
-        const isDuplicate = allImportedCourses.some(course => 
+        const isDuplicate = allImportedCourses.some(course =>
           course.title.toLowerCase().trim() === courseTitle.toLowerCase().trim()
         );
-        
+
         if (isDuplicate) {
           console.log(`Course "${courseTitle}" already imported, skipping...`);
           return;
         }
-        
+
         setImportStatus('processing');
         const importData = parseHTMLForCourseData(data.html, data.url, data.pdfData);
         processImportedData(importData);
@@ -110,11 +110,11 @@ function BookmarkletPage() {
   const handleExportToCalendar = async () => {
     try {
       setIsExporting(true);
-      
+
       // Create 2D array: each element is an array of events from a course
       const allEventsArray = processedEvents.map(course => course.events || []);
       await exportAllEvents(allEventsArray);
-      
+
       // Note: redirect happens in exportAllEvents, so this may not execute
       setTimeout(handleClearData, 1000);
     } catch (error) {
@@ -148,7 +148,7 @@ function BookmarkletPage() {
           </div>
         </div>
       )}
-      
+
       <div className="button-group">
         <button type="button" className="skip-btn" onClick={() => navigate('/')}>Skip This Step</button>
       </div>
@@ -250,7 +250,7 @@ function BookmarkletPage() {
             <div className="step-content">
               <p className="step-description">Click and drag this button to your bookmarks bar:</p>
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a 
+              <a
                 ref={bookmarkletLinkRef}
                 className="bookmarklet-link draggable"
                 draggable="true"
@@ -299,13 +299,13 @@ function BookmarkletPage() {
             <div className="step-content">
               <p className="step-description">If dragging doesn't work, copy the code manually:</p>
               <div className="code-section">
-                <button 
+                <button
                   className={`copy-button ${copied ? 'copied' : ''}`}
                   onClick={handleCopyBookmarklet}
                 >
                   {copied ? '✓ Copied!' : 'Copy Code'}
                 </button>
-                <button 
+                <button
                   className="toggle-code-button"
                   onClick={() => setShowCode(!showCode)}
                 >
