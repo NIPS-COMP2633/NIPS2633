@@ -205,7 +205,7 @@ function BookmarkletPage() {
         {/* Import Preview Section */}
         {processedEvents.length > 0 && (
           <div className="import-preview">
-            <h2>Course Preview ({processedEvents.length} Course{processedEvents.length !== 1 ? 's' : ''})</h2>
+            <h2>Schedule Preview ({processedEvents.length} Imports{processedEvents.length !== 1 ? 's' : ''})</h2>
             <p className="preview-info">
               Review the course details below before exporting to your calendar:
             </p>

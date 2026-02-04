@@ -871,7 +871,7 @@ a {
 /* Import Preview Section */
 .import-preview {
   background: var(--bg-input);
-  border: 3px solid var(--color-sage);
+  border: 3px solid var(--border-dark);
   border-radius: 12px;
   padding: 30px;
   margin: 30px 0;
