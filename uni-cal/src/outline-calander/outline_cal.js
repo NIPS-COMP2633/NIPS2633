@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './outline_cal.css';
 import { processImportData, parseHTMLForCourseData, STORAGE_KEY } from './utils/dataProcessor';
 import { generateBookmarkletCode, copyToClipboard as copyText } from './utils/bookmarkletGenerator';
@@ -10,6 +10,7 @@ import { exportAllEvents } from '../client-side-scripts/outline_google_upoad';
 
 function BookmarkletPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [copied, setCopied] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [importStatus, setImportStatus] = useState('listening');
@@ -20,6 +21,30 @@ function BookmarkletPage() {
   const bookmarkletLinkRef = useRef(null);
   const bookmarkletCode = generateBookmarkletCode();
 
+
+  // Handle MRU events passed from login page
+  useEffect(() => {
+    if (location.state?.mruEvents && location.state.mruEvents.length > 0) {
+      console.log('Received MRU events from login:', location.state.mruEvents);
+      
+      // Convert MRU events to course format
+      const mruCourse = {
+        title: 'MRU Schedule',
+        events: location.state.mruEvents,
+        location: 'Various',
+        instructor: 'From MRU Schedule Builder'
+      };
+      
+      setAllImportedCourses(prev => [...prev, mruCourse]);
+      setProcessedEvents(prev => [...prev, mruCourse]);
+      setImportStatus('success');
+      
+      // Clear the state to prevent re-processing on refresh
+      window.history.replaceState({}, document.title);
+      
+      setTimeout(() => setImportStatus('listening'), 2000);
+    }
+  }, [location.state]);
 
   // Set bookmarklet href
   useEffect(() => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './mru_login.css';
 import { mru_login } from '../client-side-scripts/mock';
+import { XmlToJsonConverter } from '../outline-calander/utils/xmlToJsonConverter';
 
 function MRULogin() {
   const [username, setUsername] = useState('');
@@ -68,9 +69,15 @@ function MRULogin() {
         })
         .then(xmlData => {
           console.log('Calendar data received:', xmlData);
+          
+          // Convert XML to JSON events
+          const events = XmlToJsonConverter.convert(xmlData);
+          console.log('Converted to events:', events);
+          
           showNotification('✓ Login successful! Loading your calendar...', true);
           setTimeout(() => {
-            navigate('/bookmarklet');
+            // Navigate and pass the events data
+            navigate('/bookmarklet', { state: { mruEvents: events } });
           }, 1500);
         })
         .catch(error => {
