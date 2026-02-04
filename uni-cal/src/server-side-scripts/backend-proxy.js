@@ -176,7 +176,7 @@ app.post('/api/get_calendar', async (req, res) => {
         const step4 = await client.get(authSessionDataURL);
 
         // Step 5: Submit login credentials
-        const step5 = await client.post('https://auth.mtroyal.ca/commonauth', 
+        const step5 = await client.post('https://auth.mtroyal.ca/commonauth',
             new URLSearchParams({
                 usernameUserInput: username,
                 username: username,
@@ -225,13 +225,13 @@ app.post('/api/get_calendar', async (req, res) => {
         // Validate enrollment data
         if (!enrollmentData || !enrollmentData.cnfs || !Array.isArray(enrollmentData.cnfs)) {
             console.error('Invalid enrollment data:', enrollmentData);
-            return res.status(500).json({ 
+            return res.status(500).json({
                 error: 'Could not retrieve course enrollment data',
                 details: 'The enrollment API returned unexpected data format'
             });
         }
         if (enrollmentData.cnfs.length === 0) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: 'No courses found',
                 details: 'Your account has no enrolled courses for this term'
             });
