@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './mru_login.css';
 import { mru_login } from '../client-side-scripts/mock';
+import XmlToJsonConverter from '../client-side-scripts/xml_to_json';
 
 function MRULogin() {
   const [username, setUsername] = useState('');
@@ -36,8 +37,8 @@ function MRULogin() {
         return response.text(); // Get XML as text
       })
       .then(xmlData => {
-        console.log('Calendar data received:', xmlData);
-        // TODO: Parse XML data here or pass it to next component
+        const calendarJson = XmlToJsonConverter.convert(xmlData);
+        console.log('Calendar JSON:', calendarJson);
         // Navigate to bookmarklet page after successful login
         navigate('/bookmarklet');
       })

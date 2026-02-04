@@ -155,22 +155,4 @@ class XmlToJsonConverter {
   }
 }
 
-// TEST with real XML snippet
-const sampleXml = `
-<course key="COMP-2633" code="COMP" number="2633">
-  <uselection key="--202601_13302-13304-">
-    <selection key="--202601_13302-13304-">
-      <block type="Lec" key="13302" secNo="001" teacher="Kidney, Jordan" location="E206" timeblockids="7,8"/>
-      <block type="Tut" key="13304" secNo="401" teacher="Kidney, Jordan" location="E147" timeblockids="9"/>
-    </selection>
-    <timeblock id="7" day="2" t1="690" t2="770" d1="6581" d2="6690"/>
-    <timeblock id="8" day="4" t1="690" t2="770" d1="6581" d2="6690"/>
-    <timeblock id="9" day="3" t1="870" t2="980" d1="6581" d2="6690"/>
-  </uselection>
-  <offering key="COMP-2633" title="Foundations of Software Engineering"/>
-</course>
-`;
-
-console.log(XmlToJsonConverter.convert(sampleXml));
-
 module.exports = XmlToJsonConverter;
