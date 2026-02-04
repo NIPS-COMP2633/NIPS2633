@@ -1,0 +1,61 @@
+/* global gapi, google */
+
+const CLIENT_ID = process.env.google_calander_client_id;
+const API_KEY = process.env.google_calander_api_key;
+const DISCOVERY_DOC = process.env.google_calander_discovery_doc;
+const SCOPES = process.env.google_calander_scopes;
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+
+export function gapiLoaded() {
+  gapi.load('client', initializeGapiClient);
+}
+
+export function gisLoaded() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: '', // defined later
+  });
+  gisInited = true;
+}
+
+export async function initializeGapiClient() {
+  await gapi.client.init({
+    apiKey: API_KEY,
+    discoveryDocs: [DISCOVERY_DOC],
+  });
+  gapiInited = true;
+}
+
+export function handleAuthClick(onAuthSuccess) {
+  tokenClient.callback = async (resp) => {
+    console.log("Auth Response: ", resp)
+    if (resp.error !== undefined) {
+      throw (resp);
+    }
+
+    if (onAuthSuccess) {
+      onAuthSuccess()
+    }
+
+  };
+  if (gapi.client.getToken() === null) {
+    // Prompt the user to select a Google Account and ask for consent to share their data
+    // when establishing a new session.
+    tokenClient.requestAccessToken({ prompt: 'consent' });
+  } else {
+    // Skip display of account chooser and consent dialog for an existing session.
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+
+export function handleSignoutClick() {
+  const token = gapi.client.getToken();
+  if (token !== null) {
+    google.accounts.oauth2.revoke(token.access_token);
+    gapi.client.setToken('');
+  }
+}
