@@ -11,6 +11,7 @@ const cors = require('cors');
 const { wrapper } = require('axios-cookiejar-support');
 const { CookieJar } = require('tough-cookie');
 const { parseString, Builder } = require('xml2js');
+const calendarAuthRouter = require('./calendar_auth');
 
 const app = express();
 const PORT = 3001;
@@ -22,6 +23,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Mount calendar auth routes
+app.use('/api/calendar-auth', calendarAuthRouter);
 
 /**
  * Extract cartids from enrollment string

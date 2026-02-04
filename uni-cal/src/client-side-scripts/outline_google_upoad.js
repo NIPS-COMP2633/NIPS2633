@@ -1,4 +1,4 @@
-import { handleAuthClick, gapiLoaded, gisLoaded } from './calendar_auth';
+import { handleAuthClick, gapiLoaded, gisLoaded } from './calendar_auth_client';
 import { addNewCalendar, addEvents } from './export_events';
 
 /**
