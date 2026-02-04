@@ -6,9 +6,21 @@ import { mru_login } from '../client-side-scripts/mock';
 function MRULogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showError, setShowError] = useState(false);
   const navigate = useNavigate();
+
+  const showNotification = (message, isSuccess = true) => {
+    const div = document.createElement('div');
+    div.textContent = message;
+    const bgColor = isSuccess ? '#B2CD9C' : '#d32f2f';
+    const textColor = isSuccess ? '#4B352A' : '#4B352A';
+    div.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${bgColor};color:${textColor};padding:20px 30px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:999999;font-family:inherit;font-size:18px;font-weight:600;max-width:500px;text-align:center;`;
+    document.body.appendChild(div);
+    setTimeout(() => {
+      div.style.transition = 'opacity 0.5s';
+      div.style.opacity = '0';
+      setTimeout(() => document.body.removeChild(div), 500);
+    }, isSuccess ? 1500 : 4000);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,39 +51,20 @@ function MRULogin() {
         })
         .then(xmlData => {
           console.log('Calendar data received:', xmlData);
-          // Show success notification
-          setShowSuccess(true);
-          // Navigate to bookmarklet page after a brief delay
+          showNotification('✓ Login successful! Loading your calendar...', true);
           setTimeout(() => {
             navigate('/bookmarklet');
           }, 1500);
         })
         .catch(error => {
           console.error('Error fetching calendar:', error);
-          setShowError(true);
-          // Auto-hide error notification after 4 seconds
-          setTimeout(() => {
-            setShowError(false);
-          }, 4000);
+          showNotification('✗ Login failed. Please check your credentials and try again.', false);
         });
     }
   };
 
   return (
     <div className="mru-login-page">
-      {showSuccess && (
-        <div className="success-notification">
-          <span className="success-icon">✓</span>
-          <span className="success-message">Login successful! Loading your calendar...</span>
-        </div>
-      )}
-      {showError && (
-        <div className="error-notification">
-          <span className="error-icon">✕</span>
-          <span className="error-message">Login failed. Please check your credentials and try again.</span>
-        </div>
-      )}
-
       <div className="login-container">
         <h2>MRU Login</h2>
         <form id="loginForm" onSubmit={handleSubmit}>
