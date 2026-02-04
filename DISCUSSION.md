@@ -1,6 +1,7 @@
 # Team Hackathon Post Template
 
 ## Team Information
+
 * **Team name:**
 * **Team members:**
 * **Tools / language(s) used:**
@@ -14,6 +15,12 @@
 ## 4. AI Use (If Any)
 
 ## 5. Evidence of Work
+
+Video of how our site works: [youtube_video.](https://youtu.be/UfqZ6Q7_L4s)
+
+Link to our site: [my-schedule-sync.](https://my-schedule-sync.netlify.app/)
+
+Link to our repo [github-repo](https://github.com/NIPS-COMP2633/NIPS2633)
 
 ## 6. Team Reflection — Multiple Perspectives
 
