@@ -13,7 +13,24 @@ function MRULogin() {
     div.textContent = message;
     const bgColor = isSuccess ? '#B2CD9C' : '#d32f2f';
     const textColor = isSuccess ? '#1a130f' : '#1a130f';
-    div.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${bgColor};color:${textColor};padding:20px 30px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:999999;font-family:inherit;font-size:18px;font-weight:600;max-width:500px;text-align:center;`;
+    const fontFamily = 'monospace';
+    div.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: ${bgColor};
+      color: ${textColor};
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 999999;
+      font-family: ${fontFamily};
+      font-size: 18px;
+      font-weight: 800;
+      max-width: 500px;
+      text-align: center;
+    `;
     document.body.appendChild(div);
     setTimeout(() => {
       div.style.transition = 'opacity 0.5s';
