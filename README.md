@@ -2,8 +2,9 @@
 
 Deployed at <https://my-schedule-sync.netlify.app/>
 
-Status:
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9ef6f1cf-b7d9-4963-af20-49bd1ba99ff2/deploy-status)](https://app.netlify.com/projects/my-schedule-sync/deploys)
+
+---
 
 ### Scripts
 
