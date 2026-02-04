@@ -1,5 +1,5 @@
 const newCalendar = {
-    summary: 'Test Calendar',
+    summary: 'TMyScheduleSync',
     description: 'Events imported from .ics file',
     timeZone: 'America/Edmonton'
   };
