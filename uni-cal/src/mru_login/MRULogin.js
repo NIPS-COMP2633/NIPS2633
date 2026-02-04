@@ -10,41 +10,41 @@ function MRULogin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (username && password) {
       console.log('Login attempt:', { username, password });
-      
-      // Call the calendar API endpoint
+
+      // Call the Netlify serverless function
       const requestBody = {
         username: username,
         password: password,
         term: 20260150
       };
-      
-      fetch('http://localhost:3001/api/get_calendar', {
+
+      fetch('/.netlify/functions/backend-proxy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody)
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text(); // Get XML as text
-      })
-      .then(xmlData => {
-        console.log('Calendar data received:', xmlData);
-        // TODO: Parse XML data here or pass it to next component
-        // Navigate to bookmarklet page after successful login
-        navigate('/bookmarklet');
-      })
-      .catch(error => {
-        console.error('Error fetching calendar:', error);
-        alert('Login failed. Please check your credentials and try again.');
-      });
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text(); // Get XML as text
+        })
+        .then(xmlData => {
+          console.log('Calendar data received:', xmlData);
+          // TODO: Parse XML data here or pass it to next component
+          // Navigate to bookmarklet page after successful login
+          navigate('/bookmarklet');
+        })
+        .catch(error => {
+          console.error('Error fetching calendar:', error);
+          alert('Login failed. Please check your credentials and try again.');
+        });
     }
   };
 
@@ -56,10 +56,10 @@ function MRULogin() {
         <form id="loginForm" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username</label>
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
+            <input
+              type="text"
+              id="username"
+              name="username"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -68,10 +68,10 @@ function MRULogin() {
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
+            <input
+              type="password"
+              id="password"
+              name="password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -85,7 +85,7 @@ function MRULogin() {
           </div>
         </form>
       </div>
-            <div className="button-group">
+      <div className="button-group">
         <button type="button" className="skip-btn" onClick={() => navigate('/bookmarklet')}>Skip This Step</button>
       </div>
     </div>

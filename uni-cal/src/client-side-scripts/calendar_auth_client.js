@@ -3,7 +3,7 @@
  * Communicates with the server-side calendar_auth API
  */
 
-const API_BASE_URL = 'http://localhost:3001/api/calendar-auth';
+const API_BASE_URL = '/.netlify/functions/calendar_auth';
 
 // Generate a unique session ID for this browser session
 const SESSION_ID = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
