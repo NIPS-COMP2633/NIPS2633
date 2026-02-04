@@ -29,7 +29,7 @@ function BookmarkletPage() {
 
       // Convert MRU events to course format
       const mruCourse = {
-        title: 'MRU Schedule',
+        title: 'MRU Class Schedule',
         events: location.state.mruEvents, // Array of event objects
         location: 'Various',
         instructor: 'From MRU Schedule Builder'
@@ -205,7 +205,7 @@ function BookmarkletPage() {
         {/* Import Preview Section */}
         {processedEvents.length > 0 && (
           <div className="import-preview">
-            <h2>Schedule Preview ({processedEvents.length} Imports{processedEvents.length !== 1 ? 's' : ''})</h2>
+            <h2>Schedule Preview ({processedEvents.length} Import{processedEvents.length !== 1 ? 's' : ''})</h2>
             <p className="preview-info">
               Review the course details below before exporting to your calendar:
             </p>
@@ -242,7 +242,7 @@ function BookmarkletPage() {
                     )}
                     {course.instructor && (
                       <div className="detail-row">
-                        <strong>Instructor:</strong> <span>{course.instructor}</span>
+                        <strong>Source:</strong> <span>{course.instructor}</span>
                       </div>
                     )}
                   </div>
