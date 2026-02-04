@@ -69,11 +69,11 @@ function MRULogin() {
         })
         .then(xmlData => {
           console.log('Calendar data received:', xmlData);
-          
+
           // Convert XML to JSON events
           const events = XmlToJsonConverter.convert(xmlData);
           console.log('Converted to events:', events);
-          
+
           showNotification('✓ Login successful! Loading your calendar...', true);
           setTimeout(() => {
             // Navigate and pass the events data

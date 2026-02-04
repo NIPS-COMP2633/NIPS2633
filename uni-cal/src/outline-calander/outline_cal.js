@@ -26,7 +26,7 @@ function BookmarkletPage() {
   useEffect(() => {
     if (location.state?.mruEvents && location.state.mruEvents.length > 0) {
       console.log('Received MRU events from login:', location.state.mruEvents);
-      
+
       // Convert MRU events to course format
       const mruCourse = {
         title: 'MRU Schedule',
@@ -34,17 +34,17 @@ function BookmarkletPage() {
         location: 'Various',
         instructor: 'From MRU Schedule Builder'
       };
-      
+
       console.log('Formatted MRU course:', mruCourse);
       console.log('Number of MRU events:', mruCourse.events.length);
-      
+
       setAllImportedCourses(prev => [...prev, mruCourse]);
       setProcessedEvents(prev => [...prev, mruCourse]);
       setImportStatus('success');
-      
+
       // Clear the state to prevent re-processing on refresh
       window.history.replaceState({}, document.title);
-      
+
       setTimeout(() => setImportStatus('listening'), 2000);
     }
   }, [location.state]);
@@ -145,7 +145,7 @@ function BookmarkletPage() {
       console.log('Total event arrays:', allEventsArray.length);
       console.log('Events per course:', allEventsArray.map(arr => arr.length));
       console.log('Complete 2D events array:', JSON.stringify(allEventsArray, null, 2));
-      
+
       await exportAllEvents(allEventsArray);
 
       // Note: redirect happens in exportAllEvents, so this may not execute
@@ -203,7 +203,7 @@ function BookmarkletPage() {
         )}
 
         {/* Import Preview Section */}
-        {importedData && processedEvents.length > 0 && (
+        {processedEvents.length > 0 && (
           <div className="import-preview">
             <h2>Course Preview ({processedEvents.length} Course{processedEvents.length !== 1 ? 's' : ''})</h2>
             <p className="preview-info">
@@ -211,18 +211,23 @@ function BookmarkletPage() {
             </p>
             <div className="courses-list">
               {allImportedCourses.map((course, idx) => (
-                <div key={idx} className="course-card">
+                <div key={idx} className={`course-card ${course.title === 'MRU Schedule' ? 'mru-schedule-card' : ''}`}>
                   <h3>{course.title}</h3>
                   <div className="course-details">
                     {course.events && course.events.length > 0 ? (
                       <div className="detail-row">
                         <strong>Events:</strong>
                         <div className="events-container">
-                          {course.events.map((event, eventIdx) => (
+                          {course.events.slice(0, 4).map((event, eventIdx) => (
                             <div key={eventIdx} className="event-item">
                               {event.summary}
                             </div>
                           ))}
+                          {course.events.length > 4 && (
+                            <div className="event-item">
+                              ... and {course.events.length - 4} more
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
