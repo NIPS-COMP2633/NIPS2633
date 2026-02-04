@@ -36,13 +36,30 @@ async function fetchAuthConfig() {
  * Initialize the Google API client
  */
 export async function gapiLoaded() {
-    const config = await fetchAuthConfig();
+    try {
+        // First, load the client module
+        await new Promise((resolve, reject) => {
+            gapi.load('client', {
+                callback: resolve,
+                onerror: reject,
+                timeout: 5000,
+                ontimeout: reject
+            });
+        });
 
-    await gapi.client.init({
-        apiKey: config.apiKey,
-        discoveryDocs: [config.discoveryDoc],
-    });
-    gapiInited = true;
+        const config = await fetchAuthConfig();
+
+        await gapi.client.init({
+            apiKey: config.apiKey,
+            discoveryDocs: [config.discoveryDoc],
+        });
+        
+        gapiInited = true;
+        console.log('GAPI client initialized successfully');
+    } catch (error) {
+        console.error('Error initializing GAPI client:', error);
+        throw error;
+    }
 }
 
 /**
