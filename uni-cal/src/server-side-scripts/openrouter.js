@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
     `.replace(/\s+/g, ' ').trim();
 
         const requestBody = {
-            model: "arcee-ai/trinity-large-preview:free",
+            model: "openai/gpt-oss-safeguard-20b",
             messages: [
                 {
                     role: "system",
