@@ -10,6 +10,7 @@ const axios = require('axios');
 const cors = require('cors');
 const { wrapper } = require('axios-cookiejar-support');
 const { CookieJar } = require('tough-cookie');
+const { parseString, Builder } = require('xml2js');
 
 const app = express();
 const PORT = 3001;
@@ -21,6 +22,92 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+/**
+ * Extract cartids from enrollment string
+ * e.g., "--202601_13607--" -> ["13607"]
+ * e.g., "--202601_13303-13305-" -> ["13303", "13305"]
+ */
+function extractCartIds(enrString) {
+    const matches = enrString.match(/\d{5,}/g);
+    return matches || [];
+}
+
+/**
+ * Filter XML to only include sections matching enrolled cartids
+ * @param {string} xmlData - The full XML response from class-data API
+ * @param {Object[]} enrolledCourses - Array of enrolled course objects with enr field
+ * @returns {Promise<string>} Filtered XML string
+ */
+async function filterXMLByCourses(xmlData, enrolledCourses) {
+    return new Promise((resolve, reject) => {
+        // Extract all enrolled cartids
+        const enrolledCartIds = new Set();
+        enrolledCourses.forEach(course => {
+            const cartids = extractCartIds(course.enr);
+            cartids.forEach(id => enrolledCartIds.add(id));
+        });
+
+        console.log('Filtering XML with enrolled cartids:', Array.from(enrolledCartIds));
+
+        parseString(xmlData, (err, result) => {
+            if (err) {
+                console.error('Error parsing XML:', err);
+                return reject(err);
+            }
+
+            // Navigate to courses in the XML structure
+            if (!result.addcourse || !result.addcourse.classdata || !result.addcourse.classdata[0].course) {
+                console.log('No courses found in XML structure');
+                return resolve(xmlData); // Return original if structure is unexpected
+            }
+
+            console.log(`Found ${result.addcourse.classdata[0].course.length} courses in XML`);
+
+            // Filter each course's uselections
+            result.addcourse.classdata[0].course.forEach(course => {
+                if (course.uselection && Array.isArray(course.uselection)) {
+                    const originalCount = course.uselection.length;
+
+                    // Keep only uselections where ANY block's cartid matches enrolled cartids
+                    course.uselection = course.uselection.filter(usel => {
+                        if (usel.selection && usel.selection[0] && usel.selection[0].block) {
+                            // Check if any block in this selection has a matching cartid
+                            const hasMatch = usel.selection[0].block.some(block => {
+                                if (block.$ && block.$.cartid) {
+                                    const cartid = block.$.cartid;
+                                    const isMatch = enrolledCartIds.has(cartid);
+                                    if (isMatch) {
+                                        console.log(`  Found matching cartid: ${cartid}`);
+                                    }
+                                    return isMatch;
+                                }
+                                return false;
+                            });
+                            return hasMatch;
+                        }
+                        return false;
+                    });
+
+                    const courseKey = course.$ && course.$.key ? course.$.key : 'unknown';
+                    console.log(`Course ${courseKey}: ${originalCount} sections -> ${course.uselection.length} after filter`);
+                }
+            });
+
+            // Remove courses with no remaining uselections
+            result.addcourse.classdata[0].course = result.addcourse.classdata[0].course.filter(course => {
+                return course.uselection && course.uselection.length > 0;
+            });
+
+            console.log(`Final result: ${result.addcourse.classdata[0].course.length} courses with matching sections`);
+
+            // Convert back to XML
+            const builder = new Builder();
+            const filteredXML = builder.buildObject(result);
+            resolve(filteredXML);
+        });
+    });
+}
 
 /**
  * POST /api/get_calendar
@@ -35,9 +122,9 @@ app.use(express.json());
  */
 app.post('/api/get_calendar', async (req, res) => {
     const { username, password, term } = req.body;
-    
+
     console.log('Starting calendar workflow...');
-    
+
     // Create a fresh cookie jar for this request
     const jar = new CookieJar();
     const client = wrapper(axios.create({
@@ -46,7 +133,7 @@ app.post('/api/get_calendar', async (req, res) => {
         validateStatus: (status) => status < 400, // Don't throw on 3xx
         withCredentials: true
     }));
-    
+
     try {
         // Step 1: Initial request to get first cas session
         const step1 = await client.get('https://sb.mymru.ca/criteria.jsp');
@@ -98,6 +185,7 @@ app.post('/api/get_calendar', async (req, res) => {
                 }
             }
         );
+
         // Check for login failure
         if (step5.data.includes('Login Failed')) {
             return res.status(401).json({ error: 'Login failed - invalid credentials' });
@@ -126,8 +214,10 @@ app.post('/api/get_calendar', async (req, res) => {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Referer': 'https://sb.mymru.ca/criteria.jsp'
             }
-        })
+        });
+
         const enrollmentData = step8.data;
+
         // Validate enrollment data
         if (!enrollmentData || !enrollmentData.cnfs || !Array.isArray(enrollmentData.cnfs)) {
             console.error('Invalid enrollment data:', enrollmentData);
@@ -148,6 +238,9 @@ app.post('/api/get_calendar', async (req, res) => {
             va: c.va,
             enr: c.enr
         }));
+
+        console.log('Enrolled courses:', JSON.stringify(courses, null, 2));
+
         // Build the base form data
         const formData = {
             access: '0',
@@ -199,6 +292,7 @@ app.post('/api/get_calendar', async (req, res) => {
         const currentTime = new Date().getTime();
         const t = Math.floor(currentTime / 60000) % 1000;
         const e = (t % 3) + (t % 39) + (t % 42);
+
         // Build query params for schedule API
         const scheduleParams = {
             term: term,
@@ -207,12 +301,14 @@ app.post('/api/get_calendar', async (req, res) => {
             nouser: 1,
             _: currentTime
         };
+
         // Add course params
         courses.forEach((course, index) => {
             scheduleParams[`course_${index}_0`] = course.code;
             scheduleParams[`va_${index}_0`] = course.va;
             scheduleParams[`rq_${index}_0`] = '';
         });
+
         const scheduleResponse = await client.get('https://sb.mymru.ca/api/class-data', {
             params: scheduleParams,
             headers: {
@@ -221,8 +317,12 @@ app.post('/api/get_calendar', async (req, res) => {
                 'Referer': refererURL
             }
         });
+
+        // Filter the XML to only include enrolled sections
+        const filteredXML = await filterXMLByCourses(scheduleResponse.data, courses);
+
         res.set('Content-Type', 'application/xml');
-        res.send(scheduleResponse.data);
+        res.send(filteredXML);
     } catch (error) {
         console.error('Error during authentication:', error.message);
         res.status(500).json({
