@@ -18,6 +18,14 @@
 
 ## 6. Team Reflection — Multiple Perspectives
 
+### Sarah Fazal
+
+Overall, I found the project to be a positive and challenging experience. What went well was our ability to adapt quickly. Specifically, when switching from Ruby on Rails to JavaScript, and on multiple other instances, the change was quick and efficient with the help of AI when needed. Additionally, I found that our communication most of the time was clear and effective, which is essential in group settings. At times, there were aspects that were miscommunicated. For example, we had two of the same file implemented differently; however, we worked it out and solved our issues effectively. We were able to solve problems and work together in a meaningful way. We also tried doing daily stand-ups, which I found great, as knowing where each person is sitting at tasks, and it being a way to ask for help was great.
+
+At times, I found some instructions for tasks unclear; however, after communicating with group members, it became clear what a task was. Additionally, some tasks took a large amount of time, which I was not expecting. Time was also a factor, as balancing other classes was difficult at times. Additionally, at times, there were unclear or shifting requirements, which I found overstimulating and confusing.
+
+Overall, this experience was extremely valuable as it reinforced the great importance of communication and working as a team. Furthermore, having group members who know how to use so many different tools and guide you on how to use them effectively was great. For next time, I would start off by having a longer initial meeting to set out who does what tasks and when each task should be completed to stay on track. Additionally, having checkpoints and more in-person meetings if possible, would be great to ask questions and understand all aspects.
+
 ### Isaac Klein
 
 **What went well** - IK
