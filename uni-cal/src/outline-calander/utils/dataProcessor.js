@@ -1,8 +1,6 @@
 // Data processing utilities for converting D2L course data to Google Calendar format
 // Currently only the title is acquired successfully
 
-import { makeOpenRouterCalls } from '../language_processing/openrouter.ts';
-
 /**
  * Constants for data transfer
  */
@@ -23,7 +21,7 @@ export function validateImportData(data) {
   }
 
   // Validate each course has at least a title (other fields can be optional/empty)
-  return data.courses.every(course => 
+  return data.courses.every(course =>
     course && typeof course === 'object' && course.title
   );
 }
@@ -35,23 +33,37 @@ export function validateImportData(data) {
  * @returns {Array} - Array of event objects with summary field
  */
 async function processPDFData(pdfData) {
-  
+
   if (!pdfData || pdfData.length === 0) {
     console.log('No PDF data to process - returning empty array');
     return [];
   }
-  
-  // Call OpenRouter API with PDF data
+
+  // Call OpenRouter API via Netlify function
   try {
-    const responseData = await makeOpenRouterCalls(JSON.stringify(pdfData, null, 2));
-    
+    const response = await fetch('/.netlify/functions/openrouter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: JSON.stringify(pdfData, null, 2)
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+
     // Extract the actual message content from the API response
     if (responseData?.choices?.[0]?.message?.content) {
-      const aiMessage = responseData.choices[0].message.content;      
+      const aiMessage = responseData.choices[0].message.content;
       // Try to parse as JSON if it's a JSON response
       try {
         const parsedContent = JSON.parse(aiMessage);
-        
+
         // If it's an array of events, return them
         if (Array.isArray(parsedContent)) {
           return parsedContent;
@@ -81,10 +93,10 @@ async function processPDFData(pdfData) {
 export async function processImportData(rawData) {
   try {
     const data = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
-    
+
     // Extract events from PDF data via OpenRouter AI
     const aiExtractedEvents = data.pdfData ? await processPDFData(data.pdfData) : [];
-    
+
     if (!validateImportData(data)) {
       throw new Error('Invalid data structure');
     }
@@ -126,7 +138,7 @@ export function parseHTMLForCourseData(html, sourceUrl, pdfData = null) {
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = html;
   const title = tempDiv.querySelector('h1')?.textContent?.trim() || 'Unnamed Course';
-  
+
   // Create the import data structure
   const result = {
     timestamp: Date.now(),
@@ -144,11 +156,11 @@ export function parseHTMLForCourseData(html, sourceUrl, pdfData = null) {
       instructor: ''
     }]
   };
-  
+
   // Include PDF data if available - this will be processed by the LLM
   if (pdfData) {
     result.pdfData = pdfData;
   }
-  
+
   return result;
 }

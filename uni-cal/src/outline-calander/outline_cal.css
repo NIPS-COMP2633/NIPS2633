@@ -43,14 +43,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
-    repeating-linear-gradient(
-      45deg,
+  background-image:
+    repeating-linear-gradient(45deg,
       transparent,
       transparent 10px,
       rgba(178, 205, 156, 0.03) 10px,
-      rgba(178, 205, 156, 0.03) 20px
-    );
+      rgba(178, 205, 156, 0.03) 20px);
   pointer-events: none;
   z-index: 1;
 }
@@ -125,6 +123,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -163,7 +162,7 @@
   text-shadow: var(--shadow-text);
 }
 
-.show-bookmarks-bar > p {
+.show-bookmarks-bar>p {
   color: var(--text-muted);
   font-size: 1.1rem;
   margin-bottom: 20px;
@@ -273,7 +272,7 @@
   opacity: 0.9;
 }
 
-a{
+a {
   color: var(--border-secondary);
   font-weight: 900;
 }
@@ -352,10 +351,13 @@ a{
 }
 
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0.3;
   }
+
   50% {
     transform: translateY(-10px);
     opacity: 1;
@@ -719,8 +721,13 @@ a{
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .status-text {
@@ -769,6 +776,7 @@ a{
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -836,16 +844,24 @@ a{
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes pulse-border {
-  0%, 100% { 
+
+  0%,
+  100% {
     border-color: var(--color-orange);
     box-shadow: var(--shadow-container), 0 0 0 rgba(202, 120, 66, 0);
   }
-  50% { 
+
+  50% {
     border-color: var(--color-sage);
     box-shadow: var(--shadow-container), 0 0 20px rgba(202, 120, 66, 0.3);
   }
@@ -855,7 +871,7 @@ a{
 /* Import Preview Section */
 .import-preview {
   background: var(--bg-input);
-  border: 3px solid var(--color-sage);
+  border: 3px solid var(--border-dark);
   border-radius: 12px;
   padding: 30px;
   margin: 30px 0;
@@ -898,6 +914,15 @@ a{
 .course-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-button-hover);
+}
+
+.course-card.mru-schedule-card {
+  border: 3px solid var(--border-secondary);
+  box-shadow: var(--shadow-container);
+}
+
+.course-card.mru-schedule-card:hover {
+  box-shadow: var(--shadow-container-hover);
 }
 
 .course-card h3 {
@@ -1005,7 +1030,7 @@ a{
   box-shadow: var(--shadow-button-hover);
 }
 
-.mru_link{
+.mru_link {
   background-color: var(--color-sage);
   border-radius: 5px;
   padding: 0.2em 0.25em;
@@ -1084,6 +1109,7 @@ a{
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1105,6 +1131,7 @@ a{
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

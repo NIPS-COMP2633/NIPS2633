@@ -1,4 +1,4 @@
-import { handleAuthClick, gapiLoaded, gisLoaded } from './calendar_auth';
+import { handleAuthClick, gapiLoaded, gisLoaded, isInitialized } from './calendar_auth_client';
 import { addNewCalendar, addEvents } from './export_events';
 
 /**
@@ -8,7 +8,7 @@ import { addNewCalendar, addEvents } from './export_events';
 export async function exportAllEvents(allEventsArray) {
   console.log('Exporting events to Google Calendar...', allEventsArray);
   console.log('Number of courses:', allEventsArray?.length || 0);
-  
+
   return new Promise((resolve, reject) => {
     // Ensure Google APIs are loaded before proceeding
     if (typeof gapi === 'undefined' || typeof google === 'undefined') {
@@ -22,14 +22,19 @@ export async function exportAllEvents(allEventsArray) {
       while (!window.gapiLoaded || !window.gisLoaded) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
-      
-      // Initialize gapi client
-      gapiLoaded();
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Initialize gis
-      gisLoaded();
-      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Initialize gapi client and wait for completion
+      await gapiLoaded();
+      console.log('GAPI client initialized');
+
+      // Initialize gis and wait for completion
+      await gisLoaded();
+      console.log('GIS initialized');
+
+      // Double-check that everything is ready
+      if (!isInitialized()) {
+        throw new Error('Authentication clients failed to initialize properly');
+      }
     };
 
     waitForAPIs().then(() => {
@@ -42,13 +47,13 @@ export async function exportAllEvents(allEventsArray) {
               // Flatten the 2D array and add all events to the new calendar
               const allEvents = allEventsArray.flat();
               console.log(`Adding ${allEvents.length} events to calendar ${calendarId}`);
-              
+
               const result = await addEvents(allEvents, calendarId);
               console.log(`Successfully added ${result.count} events`);
-              
+
               // Redirect to Google Calendar to view the newly created calendar
               window.location.href = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(calendarId)}`;
-              
+
               resolve(result);
             } catch (error) {
               console.error('Error adding events:', error);
