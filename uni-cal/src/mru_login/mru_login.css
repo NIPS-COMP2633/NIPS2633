@@ -1,4 +1,3 @@
-
 /*
 * This is the style sheet for the MRU login page (React).
 * Notable inclusions are documented below.
@@ -45,14 +44,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-        repeating-linear-gradient(
-            45deg,
+    background-image:
+        repeating-linear-gradient(45deg,
             transparent,
             transparent 10px,
             rgba(178, 205, 156, 0.03) 10px,
-            rgba(178, 205, 156, 0.03) 20px
-        );
+            rgba(178, 205, 156, 0.03) 20px);
     pointer-events: none;
     z-index: 1;
 }
@@ -152,6 +149,30 @@
     opacity: 1;
 }
 
+/* Override autofill styling to match theme */
+.mru-login-page input[type="text"]:-webkit-autofill,
+.mru-login-page input[type="username"]:-webkit-autofill,
+.mru-login-page input[type="password"]:-webkit-autofill,
+.mru-login-page input[type="text"]:-webkit-autofill:hover,
+.mru-login-page input[type="username"]:-webkit-autofill:hover,
+.mru-login-page input[type="password"]:-webkit-autofill:hover,
+.mru-login-page input[type="text"]:-webkit-autofill:focus,
+.mru-login-page input[type="username"]:-webkit-autofill:focus,
+.mru-login-page input[type="password"]:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-on-dark);
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-input) inset;
+    box-shadow: 0 0 0px 1000px var(--bg-input) inset;
+    border: 2px solid var(--border-dark);
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.mru-login-page input[type="text"]:-webkit-autofill:focus,
+.mru-login-page input[type="username"]:-webkit-autofill:focus,
+.mru-login-page input[type="password"]:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-input-focus) inset;
+    box-shadow: 0 0 0px 1000px var(--bg-input-focus) inset;
+}
+
 /* Button group container */
 .button-group {
     display: flex;
@@ -162,7 +183,7 @@
     max-width: 620px;
 }
 
-.mru-login-page > .button-group {
+.mru-login-page>.button-group {
     margin: 20px 0;
     padding: 0 20px;
     flex-direction: column;
