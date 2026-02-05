@@ -26,14 +26,10 @@
 
 ### Isaac Klein
 
-**What went well**
-
 &emsp; Our team committed to using git with a standard branch structure, Required reviews for PR's, and GitHub issues- which helped us stay organized and allowed for easy collaboration.
 &emsp; The issues- with people self-assigning what they were working on- helped us stay on track and ensured that everyone knew more or less what was going on.
 &emsp; We had pretty good communication, and we had a very talented team.
 &emsp; Although this section is short, I think the vast majority of our project went very smoothly, and we collaborated very well as a team.
-
-**What didn't go well**
 
 &emsp; On the last day of the hackathon (~16 hrs before deadline), I had the task of integrating different components of our project and getting everything running in an online deployment. This required me to:
 &emsp; 1. Have administrative access to the repository to connect it to our deployment service.
@@ -42,16 +38,10 @@
 &emsp; It was only after I had finished everything when I ralized that there was a better, obvious, alternative to my approach: I should have linked the deployment to a new test branch of my own, and iteratively changed that branch- merging into development and later deployment when I was happy with how things were working.
 &emsp; Moral of my story- protocols are there for a reason: you should be very certain that there isn't a better, alternative, approach before going off and doing things your own way. Think before you `git push origin deployment`.
 
-**What was overestimated or underestimated**
-
 &emsp; Perhaps the one thing we over-estimated was the amount of time that we would have to work on this project outside of classes (and other school time-sinks). Some things that we had wanted to make standerd, daily, practice fell through due to busy schedules and different availabilities. Overall, I think we knew that this project would be a little bit of a tight fit in the 1 week time period, but in the end we accomplished everything we wanted to (*plus the outline import feature, bonus!*).
-
-**The overall experience** - IK
 
 &emsp; I had fun, and I feel that I learned a lot. The 1 week hackathon was a good stress-test for collaboration, giving us a tight deadline and endless freedom. It was a great way to illustrate the value of following agreed-upon practices and following SDLC's.
 &emsp; I always enjoy projects like these: I love seeing the raw talent of my classmates when we collaborate on projects with tight deadlines and lofty goals. *NIPS for the win!*
-
-**What you would change next time**
 
 &emsp; Refer to ""What didn't go well" above.
 &emsp; In addition however: I think, if I were to do it again- I would attempt to adapt our protocols and agreed-upon practices to something that would fit better with an environment where we need to make quick decisions and rapid changes, and something that attempted to maximize communication effectiveness with the least amount of overhead/ time investment per day. I think these changes would better fit the 1 week hackathon deadline, and perhaps be easier to adhere to with classes and other assesments in consideration.
