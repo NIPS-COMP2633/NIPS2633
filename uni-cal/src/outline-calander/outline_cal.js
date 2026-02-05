@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './outline_cal.css';
 import { processImportData, parseHTMLForCourseData, STORAGE_KEY } from './utils/dataProcessor';
 import { generateBookmarkletCode, copyToClipboard as copyText } from './utils/bookmarkletGenerator';
@@ -10,6 +10,7 @@ import { exportAllEvents } from '../client-side-scripts/outline_google_upoad';
 
 function BookmarkletPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [copied, setCopied] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [importStatus, setImportStatus] = useState('listening');
@@ -20,6 +21,32 @@ function BookmarkletPage() {
   const bookmarkletLinkRef = useRef(null);
   const bookmarkletCode = generateBookmarkletCode();
 
+
+  // Handle MRU events passed from login page
+  useEffect(() => {
+    if (location.state?.mruEvents && location.state.mruEvents.length > 0) {
+      console.log('Received MRU events from login:', location.state.mruEvents);
+
+      // Convert MRU events to course format
+      const mruCourse = {
+        title: 'MRU Class Schedule',
+        events: location.state.mruEvents, // Array of event objects
+        location: 'Various',
+        instructor: 'From MRU Schedule Builder'
+      };
+
+
+
+      setAllImportedCourses(prev => [...prev, mruCourse]);
+      setProcessedEvents(prev => [...prev, mruCourse]);
+      setImportStatus('success');
+
+      // Clear the state to prevent re-processing on refresh
+      window.history.replaceState({}, document.title);
+
+      setTimeout(() => setImportStatus('listening'), 2000);
+    }
+  }, [location.state]);
 
   // Set bookmarklet href
   useEffect(() => {
@@ -113,6 +140,11 @@ function BookmarkletPage() {
 
       // Create 2D array: each element is an array of events from a course
       const allEventsArray = processedEvents.map(course => course.events || []);
+      console.log('Exporting courses:', processedEvents.length);
+      console.log('Total event arrays:', allEventsArray.length);
+      console.log('Events per course:', allEventsArray.map(arr => arr.length));
+      console.log('Complete 2D events array:', JSON.stringify(allEventsArray, null, 2));
+
       await exportAllEvents(allEventsArray);
 
       // Note: redirect happens in exportAllEvents, so this may not execute
@@ -150,12 +182,11 @@ function BookmarkletPage() {
       )}
 
       <div className="button-group">
-        <button type="button" className="skip-btn" onClick={() => navigate('/')}>Skip This Step</button>
       </div>
       <div className="bookmarklet-container">
-        <h1>Install Uni-Cal Bookmarklet</h1>
+        <h1>Import to Google Calendar</h1>
         <p className="instructions">
-          Import events from course outlines. Uses AI: result may vary.
+          Import events from your course outlines. Uses AI: result may vary.
         </p>
 
         {/* Loading Indicator */}
@@ -170,26 +201,31 @@ function BookmarkletPage() {
         )}
 
         {/* Import Preview Section */}
-        {importedData && processedEvents.length > 0 && (
+        {processedEvents.length > 0 && (
           <div className="import-preview">
-            <h2>Course Preview ({processedEvents.length} Course{processedEvents.length !== 1 ? 's' : ''})</h2>
+            <h2>Schedule Preview ({processedEvents.length} Import{processedEvents.length !== 1 ? 's' : ''})</h2>
             <p className="preview-info">
               Review the course details below before exporting to your calendar:
             </p>
             <div className="courses-list">
               {allImportedCourses.map((course, idx) => (
-                <div key={idx} className="course-card">
+                <div key={idx} className={`course-card ${course.title === 'MRU Class Schedule' ? 'mru-schedule-card' : ''}`}>
                   <h3>{course.title}</h3>
                   <div className="course-details">
                     {course.events && course.events.length > 0 ? (
                       <div className="detail-row">
                         <strong>Events:</strong>
                         <div className="events-container">
-                          {course.events.map((event, eventIdx) => (
+                          {course.events.slice(0, 4).map((event, eventIdx) => (
                             <div key={eventIdx} className="event-item">
                               {event.summary}
                             </div>
                           ))}
+                          {course.events.length > 4 && (
+                            <div className="event-item">
+                              ... and {course.events.length - 4} more
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -204,7 +240,7 @@ function BookmarkletPage() {
                     )}
                     {course.instructor && (
                       <div className="detail-row">
-                        <strong>Instructor:</strong> <span>{course.instructor}</span>
+                        <strong>Source:</strong> <span>{course.instructor}</span>
                       </div>
                     )}
                   </div>

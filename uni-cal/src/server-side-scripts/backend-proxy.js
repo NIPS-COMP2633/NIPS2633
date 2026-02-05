@@ -1,27 +1,14 @@
 /**
- * MRU Schedule Backend Proxy
+ * MRU Schedule Backend Proxy - Netlify Serverless Function
  * 
- * This Node.js backend handles the authentication flow without CORS issues
+ * This serverless function handles the authentication flow without CORS issues
  * and properly captures redirects that browsers can't access.
  */
 
-const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
 const { wrapper } = require('axios-cookiejar-support');
 const { CookieJar } = require('tough-cookie');
 const { parseString, Builder } = require('xml2js');
-
-const app = express();
-const PORT = 3001;
-
-// Enable CORS for your frontend
-app.use(cors({
-    origin: 'http://localhost:3000', // Your React app
-    credentials: true
-}));
-
-app.use(express.json());
 
 /**
  * Extract cartids from enrollment string
@@ -110,48 +97,95 @@ async function filterXMLByCourses(xmlData, enrolledCourses) {
 }
 
 /**
- * POST /api/get_calendar
+ * Netlify serverless function handler
+ * POST /.netlify/functions/backend-proxy
  * Handles the full authentication flow and retrieves schedule data
- * 
- * The criteria-search.jsp POST redirects to a URL like:
- * https://sb.mymru.ca/criteria.jsp?access=0&lang=en&tip=4&page=results&...
- * with all course selections as query parameters
- * 
- * After that, we fetch the actual schedule XML from:
- * https://sb.mymru.ca/api/class-data with course codes and timing params
  */
-app.post('/api/get_calendar', async (req, res) => {
-    const { username, password, term } = req.body;
+exports.handler = async (event, context) => {
+    // Only allow POST requests
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: JSON.stringify({ error: 'Method Not Allowed' })
+        };
+    }
 
-    console.log('Starting calendar workflow...');
-
-    // Create a fresh cookie jar for this request
-    const jar = new CookieJar();
-    const client = wrapper(axios.create({
-        jar,
-        maxRedirects: 0, // DON'T follow redirects automatically
-        validateStatus: (status) => status < 400, // Don't throw on 3xx
-        withCredentials: true
-    }));
+    // Handle preflight requests
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: ''
+        };
+    }
 
     try {
+        const { username, password, term } = JSON.parse(event.body);
+
+        if (!username || !password || !term) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({
+                    error: 'Missing required fields',
+                    details: 'username, password, and term are required'
+                })
+            };
+        }
+
+        console.log('Starting calendar workflow...');
+
+        // Create a fresh cookie jar for this request
+        const jar = new CookieJar();
+        const client = wrapper(axios.create({
+            jar,
+            maxRedirects: 0, // DON'T follow redirects automatically
+            validateStatus: (status) => status < 400, // Don't throw on 3xx
+            withCredentials: true
+        }));
+
         // Step 1: Initial request to get first cas session
         const step1 = await client.get('https://sb.mymru.ca/criteria.jsp');
         const casSessionStart = step1.headers.location;
         if (!(step1.status >= 300 && step1.status < 400 && casSessionStart)) {
-            return res.status(500).json({ error: 'Could not extract session key from initializing request' });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Could not extract session key from initializing request' })
+            };
         }
 
         // Step 2: Start auth session
         const step2 = await client.get(casSessionStart);
         const authSessionStart = step2.headers.location;
         if (!authSessionStart) {
-            return res.status(500).json({ error: 'Could not extract auth session from step 2' });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Could not extract auth session from step 2' })
+            };
         }
         // Extract CAS session key
         const casSessionKeyMatch = authSessionStart.match(/sessionDataKey=([^&]+)/);
         if (!casSessionKeyMatch) {
-            return res.status(500).json({ error: 'Could not extract CAS session key from step 2' });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Could not extract CAS session key from step 2' })
+            };
         }
         const casSessionDataKey = casSessionKeyMatch[1];
 
@@ -159,12 +193,20 @@ app.post('/api/get_calendar', async (req, res) => {
         const step3 = await client.get(authSessionStart);
         const authSessionDataURL = step3.headers.location;
         if (!authSessionDataURL) {
-            return res.status(500).json({ error: 'Could not extract auth session data URL from step 3' });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Could not extract auth session data URL from step 3' })
+            };
         }
         // Extract auth session key
         const authSessionKeyMatch = authSessionDataURL.match(/sessionDataKey=([^&]+)/);
         if (!authSessionKeyMatch) {
-            return res.status(500).json({ error: 'Could not extract auth session key' });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Could not extract auth session key' })
+            };
         }
         const authSessionDataKey = authSessionKeyMatch[1];
 
@@ -172,7 +214,7 @@ app.post('/api/get_calendar', async (req, res) => {
         const step4 = await client.get(authSessionDataURL);
 
         // Step 5: Submit login credentials
-        const step5 = await client.post('https://auth.mtroyal.ca/commonauth', 
+        const step5 = await client.post('https://auth.mtroyal.ca/commonauth',
             new URLSearchParams({
                 usernameUserInput: username,
                 username: username,
@@ -188,7 +230,11 @@ app.post('/api/get_calendar', async (req, res) => {
 
         // Check for login failure
         if (step5.data.includes('Login Failed')) {
-            return res.status(401).json({ error: 'Login failed - invalid credentials' });
+            return {
+                statusCode: 401,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Login failed - invalid credentials' })
+            };
         }
 
         // Step 6: Finalize CAS login
@@ -197,7 +243,11 @@ app.post('/api/get_calendar', async (req, res) => {
         });
         const authenticatedURL = step6.headers.location;
         if (!authenticatedURL) {
-            return res.status(500).json({ error: 'Could not extract authenticated URL after CAS login' });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: 'Could not extract authenticated URL after CAS login' })
+            };
         }
 
         // Step 7: Access authenticated resources
@@ -221,16 +271,24 @@ app.post('/api/get_calendar', async (req, res) => {
         // Validate enrollment data
         if (!enrollmentData || !enrollmentData.cnfs || !Array.isArray(enrollmentData.cnfs)) {
             console.error('Invalid enrollment data:', enrollmentData);
-            return res.status(500).json({ 
-                error: 'Could not retrieve course enrollment data',
-                details: 'The enrollment API returned unexpected data format'
-            });
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({
+                    error: 'Could not retrieve course enrollment data',
+                    details: 'The enrollment API returned unexpected data format'
+                })
+            };
         }
         if (enrollmentData.cnfs.length === 0) {
-            return res.status(400).json({ 
-                error: 'No courses found',
-                details: 'Your account has no enrolled courses for this term'
-            });
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({
+                    error: 'No courses found',
+                    details: 'Your account has no enrolled courses for this term'
+                })
+            };
         }
         // Transform cnfs to courses format
         const courses = enrollmentData.cnfs.map(c => ({
@@ -321,19 +379,28 @@ app.post('/api/get_calendar', async (req, res) => {
         // Filter the XML to only include enrolled sections
         const filteredXML = await filterXMLByCourses(scheduleResponse.data, courses);
 
-        res.set('Content-Type', 'application/xml');
-        res.send(filteredXML);
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/xml',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: filteredXML
+        };
     } catch (error) {
         console.error('Error during authentication:', error.message);
-        res.status(500).json({
-            error: 'Authentication failed',
-            details: error.message
-        });
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                error: 'Authentication failed',
+                details: error.message
+            })
+        };
     }
-});
-
-app.listen(PORT, () => {
-    console.log(`🚀 MRU Schedule Backend Proxy running on http://localhost:${PORT}`);
-    console.log('Make sure to install dependencies:');
-    console.log('  npm install express axios cors axios-cookiejar-support tough-cookie');
-});
+};
