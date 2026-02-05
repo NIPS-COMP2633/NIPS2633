@@ -20,6 +20,32 @@
 - [You're already here, but you can see the code in our repository](https://github.com/NIPS-COMP2633/NIPS2633)
 
 ## 6. Team Reflection — Multiple Perspectives
+### Robert Parker Hutcheson
+I'm breaking the mould a little bit from my team mates because it feels easier to write, but I'm breaking the question down based on the bits in the assignment. I will make this cohesive if I can.
+#### What went well
+&emsp; The speed at which we moved was awesome, there's pros and cons to everything, but in terms of our team, we really got the job done. We set our goal. We achieved it. We succeeded past it.  
+&emsp; The competence of our team was awesome, we didn't need to mess around with tutorials.  
+&emsp; The scope we chose was appropriate for the time we had. We nailed exactly with what was wanted to do with little time to spare and little additional time.  
+&emsp; Mostly successful was the distribution of responsibilities, but we nailed what we wanted to do. We also nailed what we didn't think we could do.  
+&emsp; We had a stack shift from Rails to Node, and it worked really well. We evaluated pros and cons, made the decision, and made it happen.
+
+#### What didn’t go well
+&emsp; We had an original conversation of what we wanted to do, what we were competent with, and how we would do it. By the end, it was clear that we had different understandings of what it meant to be "good" at something. We're all bad at everything, but what we are less-bad at is the baseline.
+&emsp; I was awful at communicating the desired outcome of work.
+Meeting times
+Standards
+    On process, meaning communication and implementation
+
+#### What was overestimated or underestimated
+Realistically, nothing really. I underestimated Google's auth API, and I underestimated our team, and I underestimated the LLM parsing for adding events like assignment due dates. I wouldn't change it.
+
+#### The overall experience
+FUCKING AMAZING, we got to do shit. I'm so fed up with classes where we are perscribed on what to do and how to do it to the point where we're basically all writing the same shit.
+There's a funny difference on the lifespan of the project and the weight.
+
+#### What you would change next time
+I need to communicate better
+I'm going to skill check my collaborators on Git
 
 ### Sarah Fazal
 &emsp; Overall, I found the project to be a positive and challenging experience. What went well was our ability to adapt quickly. Specifically, when switching from Ruby on Rails to JavaScript, and on multiple other instances, the change was quick and efficient with the help of AI when needed. Additionally, I found that our communication most of the time was clear and effective, which is essential in group settings. At times, there were aspects that were miscommunicated. For example, we had two of the same file implemented differently; however, we worked it out and solved our issues effectively. We were able to solve problems and work together in a meaningful way. We also tried doing daily stand-ups, which I found great, as knowing where each person is sitting at tasks, and it being a way to ask for help was great.
