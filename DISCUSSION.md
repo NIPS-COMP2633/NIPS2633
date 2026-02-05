@@ -64,14 +64,12 @@ I used AI to debug errors in my code, but before that I would spend time trying 
 &emsp;Example prompt: [Inset error message or image]
 
 ### Sarah Fazal
-
 &emsp; AI was a great asset throughout this group project. I used AI tools, including ChatGPT, Claude, and Microsoft Copilot, to support my work, specifically the XML to JSON conversion process. AI was used to understand the structure of the MRU Schedule Builder XML. I prompted ChatGPT by saying, "How can I parse through XML structure in Ruby on Rails and convert it to JSON?" In doing so, ChatGPT gave me a full outline of every task that needed to be completed. This was great, as having initial instructions on exactly what to do was needed. Specifically, this was my first time working with Ruby on Rails, so having a clear outline was essential.  
 &emsp; Additionally, I asked ChatGPT and Copilot to provide a comprehensive guide on how to use Ruby on Rails effectively, starting with the setup process. I specifically prompted "Create a step-by-step guide on how to get set up with Ruby on Rails and give me a guideline on how to convert XML to JSON." This allowed me to learn a whole new framework, which could be an asset in the future.
 &emsp; Another use of AI was in converting Ruby on Rails straight into JavaScript. At the start of this hackathon, our team decided to use Ruby on Rails for this project. However, as development progressed, we realized that switching to JavaScript would be more effective as it is more widely understood and it aligned better with the rest of the tools and technologies we used.  
 &emsp; Overall, AI can only do so much, and it tends to make mistakes, so working alongside it was great, and the work being done was completed efficiently. Moreover, human judgment is essential to correct and refine AI-generated suggestions. Human judgment was required at all critical points in this hackathon, including validating JavaScript output that matched the Ruby logic, testing outputs against data, and adjusting AI-generated code to fit constraints and styles. Therefore, AI can only be used to a certain extent; however, it is an asset that can enhance workflow and overall success as a whole.  
 
 ### Isaac Klein
-
 &emsp; I used AI to implement specific tasks. I would provide a detailed description of what I wanted (example, which function I wanted it to call, with which parameters) and reviewed the outputs by going through the CoPilot diffs for each change. I generally used AI when I knew what I wanted, and knew what proper output should look like, so that I could error correct the output when necessary.  
 &emsp; Example Prompt:  
 
@@ -96,37 +94,23 @@ google calendar using the functions in both files.
 - [You're already here, but you can see the code in our repository](https://github.com/NIPS-COMP2633/NIPS2633)
 
 ## 6. Team Reflection — Multiple Perspectives
-### Robert Parker Hutcheson
-I'm breaking the mould a little bit from my team mates because it feels easier to write, but I'm breaking the question down based on the bits in the assignment. I will make this cohesive if I can.
-#### What went well
-&emsp; The speed at which we moved was awesome, there's pros and cons to everything, but in terms of our team, we really got the job done. We set our goal. We achieved it. We succeeded past it.  
-&emsp; The competence of our team was awesome, we didn't need to mess around with tutorials.  
-&emsp; The scope we chose was appropriate for the time we had. We nailed exactly with what was wanted to do with little time to spare and little additional time.  
-&emsp; Mostly successful was the distribution of responsibilities, but we nailed what we wanted to do. We also nailed what we didn't think we could do.  
-&emsp; We had a stack shift from Rails to Node, and it worked really well. We evaluated pros and cons, made the decision, and made it happen.
-
-#### What didn’t go well
-&emsp; We had an original conversation of what we wanted to do, what we were competent with, and how we would do it. By the end, it was clear that we had different understandings of what it meant to be "good" at something. We're all bad at everything, but what we are less-bad at is the baseline.
-&emsp; I was awful at communicating the desired outcome of work.
-Meeting times
-Standards
-    On process, meaning communication and implementation
-
-#### What was overestimated or underestimated
-Realistically, nothing really. I underestimated Google's auth API, and I underestimated our team, and I underestimated the LLM parsing for adding events like assignment due dates. I wouldn't change it.
-
-#### The overall experience
-FUCKING AMAZING, we got to do shit. I'm so fed up with classes where we are perscribed on what to do and how to do it to the point where we're basically all writing the same shit.
-There's a funny difference on the lifespan of the project and the weight.
-
-#### What you would change next time
-I need to communicate better
-I'm going to skill check my collaborators on Git
+### Naveed Elias
+&emsp; I believe our project went well and ran pretty smoothly despite having a week. I was able to understand the role my scripts play in the workflow of our web application, and my scripts worked as expected, tested and approved by my teammates. I gained a better understanding of creating and running scripts within a web application and was able to successfully implement authentication from the user to use their Google Calendar. Despite the function randomly working within the web application at the moment, I encountered an issue with my addNewCalendar script. The intended behavior was to create a new calendar and return the calendarId, which it does, but when I try to add events to it, I get an HTTP 400 error. Because of the time constraints, I made the decision to add events to the primary calendar instead of the new one. I overestimated how difficult it would be to set up the Google Console for authentication, which ended up being really easy. Compared to my last experience learning something new in the directed reading project I did, I didn't get as overwhelmed learning new things and implementing them into my task. If I could change one thing for next time, it would be to slow down the pace. Because everything was really fast-paced, I didn't give much time for myself and to check up on my teammates to see how they are doing mentally with all the work we have to do. So I hope for next time, I check up more on my teammates to ensure they're doing well.
 
 ### Sarah Fazal
 &emsp; Overall, I found the project to be a positive and challenging experience. What went well was our ability to adapt quickly. Specifically, when switching from Ruby on Rails to JavaScript, and on multiple other instances, the change was quick and efficient with the help of AI when needed. Additionally, I found that our communication most of the time was clear and effective, which is essential in group settings. At times, there were aspects that were miscommunicated. For example, we had two of the same file implemented differently; however, we worked it out and solved our issues effectively. We were able to solve problems and work together in a meaningful way. We also tried doing daily stand-ups, which I found great, as knowing where each person is sitting at tasks, and it being a way to ask for help was great.
 &emsp; At times, I found some instructions for tasks unclear; however, after communicating with group members, it became clear what a task was. Additionally, some tasks took a large amount of time, which I was not expecting. Time was also a factor, as balancing other classes was difficult at times. Additionally, at times, there were unclear or shifting requirements, which I found overstimulating and confusing.
 &emsp; Overall, this experience was extremely valuable as it reinforced the great importance of communication and working as a team. Furthermore, having group members who know how to use so many different tools and guide you on how to use them effectively was great. For next time, I would start off by having a longer initial meeting to set out who does what tasks and when each task should be completed to stay on track. Additionally, having checkpoints and more in-person meetings if possible, would be great to ask questions and understand all aspects.
+
+### Robert Parker Hutcheson
+&emsp; The speed at which we moved was awesome, there's pros and cons to everything, but in terms of our team, we really got the job done. We set our goal. We achieved it. We succeeded past it.  
+&emsp; The competence of our team was awesome, we didn't need to mess around with tutorials.  
+&emsp; The scope we chose was appropriate for the time we had. We nailed exactly what was wanted with little time to spare and little additional time.  
+&emsp; We had mostly successful distribution of responsibilities, there was a bit of friction when it came to division of responsibilities, but that boils down to a more hierarchical approach to things. In particular it felt like we did not give Sarah enough space to stretch her legs, and I think that boils down to familiarity. I've worked alongside or with Naveed and Isaac for at least a year, and as a result, I think we fell short a bit in terms of getting her as involved as she could have been. That said, our schedules were awful, there was basically no time to meet up except for ~6:00 PM and onwords. If we want to talk about mental health, having a meeting when you should be eating dinner is an excellent way to disrupt mental health.  
+&emsp; We had a stack shift from Rails to Node, and it worked really well. We evaluated pros and cons, made the decision, and made it happen.  
+&emsp; I did a particularly bad job at communicating, on multiple occasions, I had team mates come back to me with "I don't know what you're talking about." That by itself does not stress me out, I can be a good writer, I just need to dedicate the time to it. Really big call out that I need to take more time to think through my written communication.  
+&emsp; Hierarchy in general is a difficult one with group projects, we're peers, but without what I refer to as "organizational clout," it can be really tricky to implement standards. For example, early on, we were supposed to do daily standups in our Discord channel. We more or less did not. Without some sort of hierarchy, it's difficult to maintain certain standards, because who am I to try and enforce a standard on my peers? On one hand, it's good communication, on the other hand there's a very fine line between that and arrogance.  
+&emsp; Ultimately, this was an incredible experience, we weren't constrained by the limits of a "mad-lib fill in the functions" coding assignment, we were told to run with an idea, and it was so refreshing to have that freedom to just run. I'm really proud of our team and where we ended up, the idea was awesome, the execution was even better, and I'm so grateful that we got this opportunity.
 
 ### Isaac Klein
 &emsp; Our team committed to using git with a standard branch structure, Required reviews for PR's, and GitHub issues- which helped us stay organized and allowed for easy collaboration.  
@@ -148,9 +132,3 @@ I'm going to skill check my collaborators on Git
 
 &emsp; Refer to ""What didn't go well" above.  
 &emsp; In addition however: I think, if I were to do it again- I would attempt to adapt our protocols and agreed-upon practices to something that would fit better with an environment where we need to make quick decisions and rapid changes, and something that attempted to maximize communication effectiveness with the least amount of overhead/ time investment per day. I think these changes would better fit the 1 week hackathon deadline, and perhaps be easier to adhere to with classes and other assesments in consideration.
-
-### Naveed Elias
-
-&emsp; I believe our project went well and ran pretty smoothly despite having a week. I was able to understand the role my scripts play in the workflow of our web application, and my scripts worked as expected, tested and approved by my teammates. I gained a better understanding of creating and running scripts within a web application and was able to successfully implement authentication from the user to use their Google Calendar. Despite the function randomly working within the web application at the moment, I encountered an issue with my addNewCalendar script. The intended behavior was to create a new calendar and return the calendarId, which it does, but when I try to add events to it, I get an HTTP 400 error. Because of the time constraints, I made the decision to add events to the primary calendar instead of the new one. I overestimated how difficult it would be to set up the Google Console for authentication, which ended up being really easy. Compared to my last experience learning something new in the directed reading project I did, I didn't get as overwhelmed learning new things and implementing them into my task. If I could change one thing for next time, it would be to slow down the pace. Because everything was really fast-paced, I didn't give much time for myself and to check up on my teammates to see how they are doing mentally with all the work we have to do. So I hope for next time, I check up more on my teammates to ensure they're doing well.  
-
-## 7. Portfolio-Style Reflection (Optional, Short)
