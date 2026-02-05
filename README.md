@@ -8,10 +8,17 @@ Deployed at <https://my-schedule-sync.netlify.app/>
 
 ### Scripts
 
-Scripts that execute client side should go into:
+Scripts that execute client-side should go into:
 `src/client-side-scripts/`.
 
-This will be pretty much all scripts for the time being.
+Scripts that execute server-side should go into:
+`src/server-side-scripts/`.
+
+## WSL reference
+
+WSL is a lightweight virtual machine. It lives on your local machine, and is a *seperate operating system*. Once installed, open the WSL terminal and clone the repository inside WSL. Begin setup from here.
+
+Contributors: [@PkHutch](https://github.com/PkHutch), [@sudonym-i](https://github.com/sudonym-i/), [@naveede1](https://github.com/naveede1)
 
 ## React installation
 
@@ -33,9 +40,3 @@ run `npm install`
 Run development server by using:
 
 `cd uni-cal && npm start`
-
-## WSL reference
-
-WSL is a lightweight virtual machine. It lives on your local machine, and is a *seperate operating system*. Once installed, open the WSL terminal and clone the repository inside WSL. Begin setup from here.
-
-Contributors: [@PkHutch](https://github.com/PkHutch), [@sudonym-i](https://github.com/sudonym-i/), [@naveede1](https://github.com/naveede1)
