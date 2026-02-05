@@ -20,13 +20,18 @@ I used AI to implement specific tasks. I would provide a detailed description of
 
 Example Prompt:
 
-"Right now, In #file:outline_cal.js when the "Export course to google calander button" is clicked, it calls mockUploadToGoogleCalendar() in #file:outline_google_upoad.js.
+&emsp; Right now, In #file:outline_cal.js when the
+&emsp; "Export course to google calendar button"
+&emsp; is clicked, it calls mockUploadToGoogleCalendar() in
+&emsp; #file:outline_google_upoad.js.
 
-Change the function name to "exportAllEvents", and implement the function following logic.
+&emsp; Change the function name to "exportAllEvents", and
+&emsp; implement the function following logic.
 
-It should appropriately call the method in #file:calendar_auth.js and #file:export_events.js to export the json events to google calander"
-
----
+&emsp; It should appropriately call the method in
+&emsp; #file:calendar_auth.js and
+&emsp; #file:export_events.js to export the json events to
+&emsp; google calendar using the functions in both files.
 
 ## 5. Evidence of Work
 
