@@ -1,3 +1,5 @@
+/* global gapi */
+
 const newCalendar = {
   summary: 'MyScheduleSync',
   description: 'Events imported from .ics file',
