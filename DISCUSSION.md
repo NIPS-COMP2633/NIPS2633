@@ -1,7 +1,6 @@
 # Team Hackathon Post Template
 
 ## Team Information
-
 - **Team name:** NIPS
 - **Team members:**  Naveed Elias (201748310), Robert Parker Hutcheson (201762335), Isaac Klein (201763977), Sarah Fazal (201742339)
 - **Tools / language(s) used:** React.js, Node.js/Express, JavaScript (ES6+), HTML/CSS, Google Calendar API, OpenRouter API (AI integration), XML/JSON processing (xml2js, xmldom), Axios (HTTP client), React Router, Netlify (Deployment)
@@ -115,6 +114,9 @@ google calendar using the functions in both files.
 ```
 
 ## 5. Evidence of Work
+- [Video of our app in action](https://youtu.be/UfqZ6Q7_L4s)
+- [The actual live app](https://my-schedule-sync.netlify.app/)
+- [You're already here, but you can see the code in our repository](https://github.com/NIPS-COMP2633/NIPS2633)
 
 - [Video of our app in action](https://youtu.be/UfqZ6Q7_L4s)
 - [The actual live app](https://my-schedule-sync.netlify.app/)

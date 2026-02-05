@@ -18,8 +18,6 @@ Scripts that execute server-side should go into:
 
 WSL is a lightweight virtual machine. It lives on your local machine, and is a *seperate operating system*. Once installed, open the WSL terminal and clone the repository inside WSL. Begin setup from here.
 
-Contributors: [@PkHutch](https://github.com/PkHutch), [@sudonym-i](https://github.com/sudonym-i/), [@naveede1](https://github.com/naveede1)
-
 ## React installation
 
 ### Install node
@@ -40,3 +38,5 @@ run `npm install`
 Run development server by using:
 
 `cd uni-cal && npm start`
+
+Contributors: [@naveede1](https://github.com/naveede1), [@PkHutch](https://github.com/PkHutch), [@sudonym-i](https://github.com/sudonym-i/), [@sfaza339](https://github.com/sfaza339)
