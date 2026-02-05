@@ -118,10 +118,6 @@ google calendar using the functions in both files.
 - [The actual live app](https://my-schedule-sync.netlify.app/)
 - [You're already here, but you can see the code in our repository](https://github.com/NIPS-COMP2633/NIPS2633)
 
-- [Video of our app in action](https://youtu.be/UfqZ6Q7_L4s)
-- [The actual live app](https://my-schedule-sync.netlify.app/)
-- [You're already here, but you can see the code in our repository](https://github.com/NIPS-COMP2633/NIPS2633)
-
 ## 6. Team Reflection — Multiple Perspectives
 
 ### Naveed Elias
