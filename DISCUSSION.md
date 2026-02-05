@@ -4,7 +4,7 @@
 
 * **Team name:** NIPS
 
-* **Team members:** Robert Parker Hutcheson (201762335), Isaac Klein (201763977)
+* **Team members:**  Naveed Elias (201748310), Robert Parker Hutcheson (201762335), Isaac Klein (201763977)
 
 * **Tools / language(s) used:** React.js, Node.js/Express, JavaScript (ES6+), HTML/CSS, Google Calendar API, OpenRouter API (AI integration), XML/JSON processing (xml2js, xmldom), Axios (HTTP client), React Router, Netlify (Deployment)
 
