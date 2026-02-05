@@ -8,27 +8,36 @@
 ## 1. What We Set Out to Build
 
 ## 2. Input → Process → Output
-
 ### Inputs
-
 1. MRU Login: Username and password **!NOT STORED ANYWHERE!**
 2. D2L Course Outlines: The syllabus text-data is collected from the "uni-cal Importer" bookmarklet, and from it we parse information like assignments and test. After each class is added, the user must return to our website for the time being however.
 3. Google Calendar Login: A google login popup. If the user is already logged into google on their browser, it merely asks for permission- otherwise users will need to log into their google account.
 
 ### Process
-
 1. The information of the username and password is used to navigate through the redirect process starting at sb.mymru.ca, the link to My Schedule Builder, for the full process, see `app.post('/api/get_calendar'` of [backend-proxy.js](uni-cal/backend-proxy.js). It's fairly involved, because it's _lightly_ approximating the user workflow to navigate to their calendar. My Schedule Builder is not setup for developers to hit the endpoints, at least to the best of our knowledge. After using the username and password to POST for auth, it gets the current schedule for the winter 2026 semester, which is currently hardcoded.
 2. Then, the information for the calendar is brought back in memory in an XML format, as that's what the API responds with. It then goes through the [xml_to_json.js](uni-cal/src/client-side-scripts/xml_to_json.js) script, which converts it into JSON, compatible with what the Google Calendar API expects.
 3. The user is navigated to the next page, and the information for the courses is displayed, along with a prompt to add [bookmarkletGenerator.js](uni-cal/src/outline-calander/utils/bookmarkletGenerator.js) to their bookmarks bar. The instructions are given to go to their course outline, and click the bookmarklet. This will extract the raw information from their outline PDF, and instruct the user to return to their calendar preview. At this point [dataProcessor.js](uni-cal/src/outline-calander/utils/dataProcessor.js) will process the raw information into a manageable text. After which [openrouter.js](uni-cal/src/server-side-scripts/openrouter.js) will be hit, and the information will be given to the `openai/gpt-oss-safeguard-20b` model, which will attempt to extract the information of due dates, in an Google Calendar friendly format.
 4. Once the information is received, it is appended to the My Schedule Builder calendar JSON.
 
 ### Output
-
 1. The JSON is now sent via [outline_google_upoad.js](uni-cal/src/client-side-scripts/outline_google_upoad.js) in conjunction with [calendar_auth.js](uni-cal/src/client-side-scripts/calendar_auth.js) to the Google Calendar API.
 2. Authentication and permissions are handled via Google's federated authentication.
 3. Finally, the calendar information is added into the user's Google Calender as a new calendar.
 
 ## 3. Team System
+### Communication
+Our team communicated via Discord. We used the following channels:
+- #general: for overall team communication and updates
+- #schedules: for sharing and discussing schedules
+- standup: daily standup updates and progress reports (didn't fully work out)
+- #tech-support: for technical questions and troubleshooting
+- #meeting-outcomes: for posting meeting summaries and action items
+
+### Decision Making / how work was divided
+We used GitHub issues and GitHub projects to trak our tasks and features. A team member would for any tasks or features they wanted to work on, and we would prioritize using the GitHub project board. People could self-assign issues they wanted to work on to avoid two people working on the same thing.
+
+### How we handled uncertainty / confusion
+For anything we needed cleared up, Discord was our GoTo. People would message to the #General channel for questions or to clarify any confusion.
 
 ## 4. AI Use (If Any)
 
