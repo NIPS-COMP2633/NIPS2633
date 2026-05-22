@@ -28,6 +28,37 @@ export function validateImportData(data) {
 
 
 /**
+ * Extract the first complete JSON array or object from an AI response.
+ * @param {string} aiMessage - Raw AI response text
+ * @returns {Object|Array|null} - Parsed JSON content, if one is present
+ */
+export function parseAIJSONResponse(aiMessage) {
+  const firstArray = aiMessage.indexOf('[');
+  const firstObject = aiMessage.indexOf('{');
+
+  const start = [firstArray, firstObject]
+    .filter(index => index !== -1)
+    .sort((a, b) => a - b)[0];
+
+  if (start === undefined) {
+    return null;
+  }
+
+  const endChar = aiMessage[start] === '[' ? ']' : '}';
+  const end = aiMessage.lastIndexOf(endChar);
+
+  if (end === -1 || end <= start) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(aiMessage.slice(start, end + 1));
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
  * Process PDF data and extract events from AI response
  * @param {Array} pdfData - Array of PDF info objects
  * @returns {Array} - Array of event objects with summary field
@@ -60,21 +91,16 @@ async function processPDFData(pdfData) {
     // Extract the actual message content from the API response
     if (responseData?.choices?.[0]?.message?.content) {
       const aiMessage = responseData.choices[0].message.content;
-      // Try to parse as JSON if it's a JSON response
-      try {
-        const parsedContent = JSON.parse(aiMessage);
+      const parsedContent = parseAIJSONResponse(aiMessage);
 
-        // If it's an array of events, return them
-        if (Array.isArray(parsedContent)) {
-          return parsedContent;
-        }
-        // If it's a single event object, wrap in array
-        if (parsedContent && typeof parsedContent === 'object') {
-          return [parsedContent];
-        }
-      } catch (e) {
-        console.log('AI response is not JSON, raw text:', aiMessage);
+      if (Array.isArray(parsedContent)) {
+        return parsedContent;
       }
+      if (parsedContent && typeof parsedContent === 'object') {
+        return [parsedContent];
+      }
+
+      console.log('AI response is not JSON, raw text:', aiMessage);
     } else {
       console.log('Unexpected response structure from OpenRouter API');
     }
